@@ -30,7 +30,7 @@ export class Header {
 
     headerElement.innerHTML = `
       <!-- Left Section -->
-      <div class="flex items-center space-x-4 flex-1">
+      <div class="flex items-center space-x-2 sm:space-x-4 flex-1">
         <!-- Hamburger Menu -->
         <button 
           id="sidebar-toggle" 
@@ -41,7 +41,7 @@ export class Header {
         </button>
         
         <!-- Breadcrumb -->
-        <nav class="hidden md:flex items-center space-x-2 text-sm">
+        <nav class="hidden sm:flex items-center space-x-2 text-sm">
           <span class="text-gray-500 dark:text-gray-400">Fortia</span>
           <i class="fas fa-chevron-right text-xs text-gray-400"></i>
           <span id="current-section" class="text-gray-700 dark:text-gray-300 font-medium">Dashboard</span>
@@ -70,7 +70,7 @@ export class Header {
       </div>
 
       <!-- Right Section -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-1 sm:space-x-2">
 
         <!-- Dark Mode Toggle -->
         <button 
@@ -236,6 +236,29 @@ export class Header {
           </div>
         </div>
       </div>
+
+      <!-- Mobile Search Overlay -->
+      <div id="mobile-search-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
+        <div class="bg-white dark:bg-gray-800 p-4">
+          <div class="flex items-center gap-3">
+            <div class="flex-1 relative">
+              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input 
+                id="mobile-search-input"
+                type="text" 
+                placeholder="Buscar en Fortia..."
+                class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-700 rounded-lg border-0 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white form-input"
+              />
+            </div>
+            <button 
+              id="mobile-search-close"
+              class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     `;
 
     // Insert header at the beginning of the app
@@ -267,6 +290,9 @@ export class Header {
 
     // Global search functionality
     this.setupGlobalSearch();
+
+    // Mobile search functionality
+    this.setupMobileSearch();
 
     // Close dropdowns when clicking outside
     document.addEventListener("click", (e) => {
@@ -434,6 +460,45 @@ export class Header {
         searchInput.value = "";
         searchResults.classList.add("hidden");
         searchInput.blur();
+      }
+    });
+  }
+
+  setupMobileSearch() {
+    const mobileSearchToggle = document.getElementById("mobile-search-toggle");
+    const mobileSearchOverlay = document.getElementById("mobile-search-overlay");
+    const mobileSearchClose = document.getElementById("mobile-search-close");
+    const mobileSearchInput = document.getElementById("mobile-search-input");
+
+    if (!mobileSearchToggle || !mobileSearchOverlay) return;
+
+    // Abrir búsqueda móvil
+    mobileSearchToggle.addEventListener("click", () => {
+      mobileSearchOverlay.classList.remove("hidden");
+      setTimeout(() => {
+        mobileSearchInput.focus();
+      }, 100);
+    });
+
+    // Cerrar búsqueda móvil
+    mobileSearchClose.addEventListener("click", () => {
+      mobileSearchOverlay.classList.add("hidden");
+      mobileSearchInput.value = "";
+    });
+
+    // Cerrar al hacer click en el overlay
+    mobileSearchOverlay.addEventListener("click", (e) => {
+      if (e.target === mobileSearchOverlay) {
+        mobileSearchOverlay.classList.add("hidden");
+        mobileSearchInput.value = "";
+      }
+    });
+
+    // Cerrar con tecla Escape
+    mobileSearchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        mobileSearchOverlay.classList.add("hidden");
+        mobileSearchInput.value = "";
       }
     });
   }

@@ -11,10 +11,10 @@ export class DashboardView {
 
     el.innerHTML = `
       <!-- MAIN GRID -->
-      <main class="p-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <main class="p-4 sm:p-6 grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
         <!-- HEADER: título -->
         <header class="xl:col-span-12 flex items-center justify-between gap-3 mb-1">
-          <h1 class="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
+          <h1 class="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
         </header>
 
         <!-- ===== FILA 1: KPIs A TODO LO ANCHO ===== -->
@@ -31,7 +31,7 @@ export class DashboardView {
         <section class="xl:col-span-9 space-y-4">
           <!-- KPIs compactos -->
           <div class="col-span-12 bg-white dark:bg-gray-800 rounded-2xl border border-slate-200/60 dark:border-gray-700 shadow-sm p-4 w-full max-h-64 overflow-y-auto ring-1 ring-black/5 dark:ring-white/10">
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               ${this.kpiCompact("Aplicados", "45", "+15%", true, "👤")}
               ${this.kpiCompact("Entrevistas", "12", "+8%", true, "📅")}
               ${this.kpiCompact("En Revisión", "8", "-5%", false, "🔍")}
@@ -108,7 +108,7 @@ export class DashboardView {
         </aside>
 
         <!-- ===== FILA 3: CARDS DE VACANTES A TODO LO ANCHO ===== -->
-        <section class="xl:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section class="xl:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           ${this.jobCard("Frontend Developer", "TECNOLOGÍA", "23", "2h", "⚡", "#f59e0b")}
           ${this.jobCard("UX Designer", "DISEÑO", "15", "1d", "📌", "#ef4444")}
           ${this.jobCard("DevOps Engineer", "INFRAESTRUCTURA", "8", "3h", "🔥", "#f97316")}

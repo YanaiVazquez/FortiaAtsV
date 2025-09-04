@@ -97,70 +97,71 @@ export class VacantesView {
     if (!el) return;
 
     el.innerHTML = `
-      <div class="p-6 md:p-8">
+      <div class="p-4 sm:p-6 md:p-8">
         <div class="mx-auto max-w-screen-2xl 2xl:max-w-[1600px]">
           <!-- Header -->
-          <header class="flex items-center justify-between gap-3 mb-6">
-            <h1 class="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white flex items-center gap-3">
-              <span>📋</span> Gestión de Vacantes
+          <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white flex items-center gap-3">
+               Gestión de Vacantes
             </h1>
-            <div class="flex items-center gap-2">
-              <button id="btnReports" class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 py-2 text-slate-700 dark:text-gray-300 hover:bg-slate-50 inline-flex items-center gap-2">📊 Reportes</button>
-              <button id="btnConfig" class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 py-2 text-slate-700 dark:text-gray-300 hover:bg-slate-50 inline-flex items-center gap-2">⚙️ Configurar</button>
-              <button id="btnNew" class="rounded-xl bg-slate-900 text-white px-3.5 py-2 inline-flex items-center gap-2 hover:hover:bg-fortia-primary">➕ Nueva Vacante</button>
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <button id="btnReports" class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 py-2 text-slate-700 dark:text-gray-300 hover:bg-slate-50 inline-flex items-center gap-2 text-sm">📊 Reportes</button>
+              <button id="btnConfig" class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 py-2 text-slate-700 dark:text-gray-300 hover:bg-slate-50 inline-flex items-center gap-2 text-sm">⚙️ Configurar</button>
+              <button id="btnNew" class="rounded-xl bg-slate-900 text-white px-3.5 py-2 inline-flex items-center gap-2 hover:hover:bg-fortia-primary text-sm flex-1 sm:flex-none justify-center">➕ Nueva Vacante</button>
             </div>
           </header>
-          ${this.heroInsightsHTML()}
           <!-- Filtros top -->
           <section class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-3 md:p-4">
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
               <!-- Search: crece -->
-              <div class="flex-1 min-w-[280px]">
+              <div class="flex-1 min-w-full sm:min-w-[280px]">
                 <div class="flex h-11 items-center gap-2 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-slate-50 dark:bg-gray-700 px-3">
                   <span class="text-slate-500 dark:text-gray-400">🔎</span>
                   <input id="q" type="text"
-                    placeholder="Buscar por posición, departamento o reclutador..."
-                    class="w-full bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400" />
+                    placeholder="Buscar por posición, departamento..."
+                    class="w-full bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400 form-input" />
                 </div>
               </div>
 
-              <!-- Selects con ancho fijo, misma altura y sin shrink -->
-              <select id="fStatus"
-                class="shrink-0 h-11 w-[210px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
-                <option value="all">Todos los estados</option>
-                <option value="ACTIVA">Activa</option>
-                <option value="BORRADOR">Borrador</option>
-                <option value="PAUSADA">Pausada</option>
-              </select>
+              <!-- Filtros en grid responsive -->
+              <div class="grid grid-cols-2 sm:flex gap-3 w-full sm:w-auto">
+                <select id="fStatus"
+                  class="h-11 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white text-sm">
+                  <option value="all">Estados</option>
+                  <option value="ACTIVA">Activa</option>
+                  <option value="BORRADOR">Borrador</option>
+                  <option value="PAUSADA">Pausada</option>
+                </select>
 
-              <select id="fDept"
-                class="shrink-0 h-11 w-[260px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
-                <option value="all">Todos los departamentos</option>
-                <option>Tecnología</option>
-                <option>Producto</option>
-                <option>Diseño</option>
-              </select>
+                <select id="fDept"
+                  class="h-11 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white text-sm">
+                  <option value="all">Departamentos</option>
+                  <option>Tecnología</option>
+                  <option>Producto</option>
+                  <option>Diseño</option>
+                </select>
 
-              <select id="fRec"
-                class="shrink-0 h-11 w-[260px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
-                <option value="all">Todos los reclutadores</option>
-                <option>Ana García</option>
-                <option>Carlos López</option>
-                <option>María Rodríguez</option>
-                <option>Luis Martín</option>
-              </select>
+                <select id="fRec"
+                  class="h-11 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white text-sm col-span-2 sm:col-span-1">
+                  <option value="all">Reclutadores</option>
+                  <option>Ana García</option>
+                  <option>Carlos López</option>
+                  <option>María Rodríguez</option>
+                  <option>Luis Martín</option>
+                </select>
 
-              <select id="fSort"
-                class="shrink-0 h-11 w-[180px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
-                <option value="recent">Ordenar por</option>
-                <option value="apps-desc">Aplicaciones (↓)</option>
-                <option value="apps-asc">Aplicaciones (↑)</option>
-              </select>
+                <select id="fSort"
+                  class="h-11 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white text-sm">
+                  <option value="recent">Ordenar</option>
+                  <option value="apps-desc">Apps (↓)</option>
+                  <option value="apps-asc">Apps (↑)</option>
+                </select>
 
-              <button id="btnMoreFilters"
-                class="shrink-0 h-11 w-[120px] rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300 inline-flex items-center justify-center gap-2">
-                ⚙️ <span class="hidden sm:inline">Más filtros</span>
-              </button>
+                <button id="btnMoreFilters"
+                  class="h-11 rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300 inline-flex items-center justify-center gap-2 text-sm">
+                  ⚙️ <span class="hidden sm:inline">Más</span>
+                </button>
+              </div>
             </div>
           </section>
   
@@ -170,24 +171,24 @@ export class VacantesView {
           <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Izquierda -->
              <div class="xl:col-span-10 space-y-4">
-              <div class="flex items-center gap-2">
-                <button data-view="list" class="tab-btn rounded-lg px-3 py-1.5 text-sm ${
+              <div class="flex flex-wrap items-center gap-2">
+                <button data-view="list" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none ${
                   this.state.view === "list"
                     ? "bg-slate-900 text-white"
                     : "bg-slate-100"
-                }">Lista</button>
-                <button data-view="kanban" class="tab-btn rounded-lg px-3 py-1.5 text-sm ${
+                }">📋 Lista</button>
+                <button data-view="kanban" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none ${
                   this.state.view === "kanban"
                     ? "bg-slate-900 text-white"
                     : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 hover:bg-slate-50"
-                }">Kanban</button>
-                <button data-view="analytics" class="tab-btn rounded-lg px-3 py-1.5 text-sm ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 hover:bg-slate-50">Analytics</button>
+                }">📊 Kanban</button>
+                <button data-view="analytics" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 hover:bg-slate-50">📈 Analytics</button>
               </div>
               <div id="viewContainer"></div>
             </div>
 
             <!-- Derecha: AI Insights -->
-            <aside class="lg:col-span-2">
+            <aside class="lg:col-span-2 order-first lg:order-last">
               <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 p-4 flex flex-col ring-1 ring-black/5 dark:ring-white/10">
                 <!-- Header -->
                 <div class="flex items-center justify-between mb-3">
@@ -298,9 +299,10 @@ export class VacantesView {
   // ---------- LISTA ----------
   listHTML() {
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800">
-        <div class="overflow-x-auto">
-          <table class="min-w-full">
+      <!-- Vista de tabla para desktop -->
+      <div class="hidden sm:block rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800">
+        <div class="overflow-x-auto table-responsive">
+          <table class="min-w-full sm:min-w-[800px]">
             <thead class="text-left text-slate-500 text-xs uppercase tracking-wide">
               <tr>
                 <th class="px-4 py-3">Posición</th>
@@ -317,6 +319,12 @@ export class VacantesView {
           </table>
         </div>
       </div>
+
+      <!-- Vista de cards para móvil -->
+      <div class="sm:hidden space-y-3">
+        <div id="jobsListMobile"></div>
+      </div>
+
       <div class="text-center text-sm text-slate-500 mt-2">
         <span id="showingText"></span>
       </div>
@@ -378,9 +386,20 @@ export class VacantesView {
     if (this.state.sort === "apps-asc") list.sort((a, b) => a.apps - b.apps);
 
     const tbody = document.getElementById("jobsList");
+    const mobileList = document.getElementById("jobsListMobile");
     const showing = document.getElementById("showingText");
-    tbody.innerHTML = list.map((j) => this.row(j)).join("");
-    showing.textContent = `Mostrando ${list.length} de ${this.state.jobs.length} vacantes`;
+    
+    if (tbody) {
+      tbody.innerHTML = list.map((j) => this.row(j)).join("");
+    }
+    
+    if (mobileList) {
+      mobileList.innerHTML = list.map((j) => this.mobileCard(j)).join("");
+    }
+    
+    if (showing) {
+      showing.textContent = `Mostrando ${list.length} de ${this.state.jobs.length} vacantes`;
+    }
   }
 
   row(j) {
@@ -440,6 +459,49 @@ export class VacantesView {
 
     const edit = `<button data-action="edit" data-id="${j.id}" class="rounded-lg ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-2.5 py-1.5 text-sm text-slate-700 dark:text-gray-300 hover:bg-slate-50 ml-2">Editar</button>`;
     return `<div class="flex items-center">${primary}${edit}</div>`;
+  }
+
+  mobileCard(j) {
+    const pill = this.statusPill(j.status);
+    const appsDelta = j.appsDelta === 0 ? "" : j.appsDelta > 0 ? `+${j.appsDelta}` : `${j.appsDelta}`;
+    
+    return `
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <h3 class="font-semibold text-gray-900 dark:text-white text-sm">${j.title}</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${j.department} • ${j.location}</p>
+          </div>
+          ${pill}
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Aplicaciones</span>
+            <div class="font-medium text-gray-900 dark:text-white">
+              ${j.apps} ${appsDelta ? `<span class="text-green-600">${appsDelta}</span>` : ''}
+            </div>
+          </div>
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Reclutador</span>
+            <div class="font-medium text-gray-900 dark:text-white">${j.recruiter}</div>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+          <span class="text-xs text-gray-500 dark:text-gray-400">${j.publishedAgo}</span>
+          <div class="flex gap-2">
+            ${j.status === "BORRADOR" 
+              ? `<button data-action="publicar" data-id="${j.id}" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Publicar</button>`
+              : j.status === "PAUSADA"
+              ? `<button data-action="reactivar" data-id="${j.id}" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Reactivar</button>`
+              : `<button data-action="pipeline" data-id="${j.id}" class="bg-blue-500 text-white px-3 py-1 rounded text-xs">Ver</button>`
+            }
+            <button data-action="edit" data-id="${j.id}" class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded text-xs">Editar</button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   // ---------- KANBAN ----------

@@ -65,7 +65,7 @@ export class CandidatosView {
   render() {
     const el = document.getElementById("main-content");
     el.innerHTML = `
-      <div class="p-6 md:p-8">
+      <div class="p-4 sm:p-6 md:p-8">
         <div class="mx-auto max-w-screen-2xl 2xl:max-w-[1600px]">
           <!-- header -->
           <header class="mb-4">
@@ -119,8 +119,8 @@ export class CandidatosView {
 
           <!-- tabla -->
           <section class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800">
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-[1100px] table-auto text-sm">
+            <div class="overflow-x-auto table-responsive">
+              <table class="w-full min-w-[800px] sm:min-w-[1100px] table-auto text-sm">
                 <thead class="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wide">
                   <tr>
                     <th class="px-4 py-3 text-left w-[28%]">Candidato</th>

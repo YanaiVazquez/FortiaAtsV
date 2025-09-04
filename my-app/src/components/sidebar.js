@@ -15,6 +15,20 @@ export class Sidebar {
     this.render();
     this.attachEventListeners();
     this.applyCollapsedState();
+    this.setupMobileHandling();
+  }
+
+  setupMobileHandling() {
+    // Manejar redimensionamiento de ventana
+    window.addEventListener('resize', () => {
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) {
+        // Si cambiamos a desktop, limpiar estado móvil
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.remove('mobile-open');
+        this.removeMobileOverlay();
+      }
+    });
   }
 
   render() {
@@ -126,6 +140,15 @@ export class Sidebar {
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
         const view = e.currentTarget.getAttribute('data-view');
+        
+        // En móvil, cerrar sidebar después de navegar
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          const sidebar = document.getElementById('sidebar');
+          sidebar.classList.remove('mobile-open');
+          this.removeMobileOverlay();
+        }
+        
         // 👉 usa el router para manejar URL + carga de vista
         if (this.router) this.router.navigate(view);
         else {
@@ -175,9 +198,52 @@ export class Sidebar {
   }
 
   toggle() {
-    this.isCollapsed = !this.isCollapsed;
-    localStorage.setItem('sidebarCollapsed', this.isCollapsed.toString());
-    this.applyCollapsedState();
+    // Detectar si estamos en móvil
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // En móvil: mostrar/ocultar sidebar con overlay
+      this.toggleMobile();
+    } else {
+      // En desktop: colapsar/expandir sidebar
+      this.isCollapsed = !this.isCollapsed;
+      localStorage.setItem('sidebarCollapsed', this.isCollapsed.toString());
+      this.applyCollapsedState();
+    }
+  }
+
+  toggleMobile() {
+    const sidebar = document.getElementById('sidebar');
+    const isOpen = sidebar.classList.contains('mobile-open');
+    
+    if (isOpen) {
+      // Cerrar sidebar móvil
+      sidebar.classList.remove('mobile-open');
+      this.removeMobileOverlay();
+    } else {
+      // Abrir sidebar móvil
+      sidebar.classList.add('mobile-open');
+      this.createMobileOverlay();
+    }
+  }
+
+  createMobileOverlay() {
+    // Crear overlay si no existe
+    if (!document.querySelector('.mobile-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'mobile-overlay';
+      overlay.addEventListener('click', () => {
+        this.toggleMobile(); // Cerrar al hacer click en overlay
+      });
+      document.body.appendChild(overlay);
+    }
+  }
+
+  removeMobileOverlay() {
+    const overlay = document.querySelector('.mobile-overlay');
+    if (overlay) {
+      overlay.remove();
+    }
   }
 
   applyCollapsedState() {
