@@ -33,18 +33,18 @@ export class NuevaVacanteView {
       <div class="p-6 md:p-8">
         <div class="mx-auto max-w-7xl">
           <!-- Migas + Título -->
-          <div class="mb-4 text-sm text-slate-500">
+          <div class="mb-4 text-sm text-slate-500 dark:text-gray-400">
             <a class="hover:underline" href="#">Dashboard</a>
             <span class="mx-2">›</span>
             <a class="hover:underline" href="#">Nueva Vacante</a>
           </div>
 
           <header class="mb-6">
-            <h1 class="text-2xl md:text-3xl font-semibold text-slate-900 flex items-center gap-3">
-              <span class="inline-flex h-6 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 text-[11px] font-bold">NEW</span>
+            <h1 class="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white flex items-center gap-3">
+              <span class="inline-flex h-6 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold">NEW</span>
               Crear Nueva Vacante
             </h1>
-            <p class="text-slate-600 mt-1">Utiliza nuestro asistente para crear vacantes efectivas que atraigan talento.</p>
+            <p class="text-slate-600 dark:text-gray-300 mt-1">Utiliza nuestro asistente para crear vacantes efectivas que atraigan talento.</p>
           </header>
 
           ${this.stepper()}
@@ -55,16 +55,16 @@ export class NuevaVacanteView {
           </section>
 
           <!-- Footer acciones -->
-          <footer class="mt-6 flex items-center justify-between gap-3 border-t pt-4">
+          <footer class="mt-6 flex items-center justify-between gap-3 border-t dark:border-gray-700 pt-4">
             <div class="flex items-center gap-2">
-              <button id="btnCancel" class="rounded-xl px-3 py-2 text-slate-600 hover:bg-slate-100">Cancelar</button>
-              <button id="btnDraft" class="rounded-xl px-3 py-2 ring-1 ring-black/5 bg-white hover:bg-slate-50 text-slate-700">Guardar Borrador</button>
+              <button id="btnCancel" class="rounded-xl px-3 py-2 text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-700">Cancelar</button>
+              <button id="btnDraft" class="rounded-xl px-3 py-2 ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300">Guardar Borrador</button>
             </div>
             <div class="flex items-center gap-2">
-              <button id="btnPrev" ${this.step === 1 ? "disabled" : ""} class="rounded-xl px-3 py-2 ring-1 ring-black/5 text-slate-700 bg-white disabled:opacity-50">
+              <button id="btnPrev" ${this.step === 1 ? "disabled" : ""} class="rounded-xl px-3 py-2 ring-1 ring-black/5 dark:ring-white/10 text-slate-700 dark:text-gray-300 bg-white dark:bg-gray-800 disabled:opacity-50">
                 ← Anterior
               </button>
-              <button id="btnNext" class="rounded-xl px-4 py-2 bg-[#6D28D9] text-white hover:opacity-95">
+              <button id="btnNext" class="rounded-xl px-4 py-2 bg-[#004176] hover:bg-[#003a6b] text-white transition-colors">
                 ${this.step < this.maxStep ? "Continuar →" : "Finalizar"}
               </button>
             </div>
@@ -83,22 +83,22 @@ export class NuevaVacanteView {
       { n: 4, t: "Vista Previa", s: "Revisar y publicar" }
     ];
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 bg-white p-3">
+      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-3">
         <ol class="grid grid-cols-4 gap-2">
           ${steps
             .map(({ n, t, s }) => {
               const current = n === this.step;
               const done = n < this.step;
               const baseCircle =
-                "h-8 w-8 grid place-items-center rounded-full text-sm font-semibold ring-1 ring-black/5";
+                "h-8 w-8 grid place-items-center rounded-full text-sm font-semibold ring-1 ring-black/5 dark:ring-white/10";
               const circle = done
                 ? `${baseCircle} bg-emerald-500 text-white`
                 : current
-                ? `${baseCircle} bg-[#004176] text-white`
-                : `${baseCircle} bg-slate-100 text-slate-600`;
+                ? `${baseCircle} bg-[#004176] dark:bg-blue-600 text-white`
+                : `${baseCircle} bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300`;
               const bar =
                 n < 4
-                  ? `<div class="hidden md:block absolute right-[-10%] top-1/2 h-[2px] w-[20%] -translate-y-1/2 ${done ? "bg-emerald-500" : current ? "bg-[#004176]" : "bg-slate-200"}"></div>`
+                  ? `<div class="hidden md:block absolute right-[-10%] top-1/2 h-[2px] w-[20%] -translate-y-1/2 ${done ? "bg-emerald-500" : current ? "bg-[#004176] dark:bg-blue-600" : "bg-slate-200 dark:bg-gray-600"}"></div>`
                   : "";
               return `
                 <li class="relative">
@@ -106,8 +106,8 @@ export class NuevaVacanteView {
                   <div class="flex items-center gap-3">
                     <span class="${circle}">${n}</span>
                     <div>
-                      <p class="text-sm font-medium ${current ? "text-slate-900" : "text-slate-600"}">${t}</p>
-                      <p class="text-xs text-slate-500">${s}</p>
+                      <p class="text-sm font-medium ${current ? "text-slate-900 dark:text-white" : "text-slate-600 dark:text-gray-300"}">${t}</p>
+                      <p class="text-xs text-slate-500 dark:text-gray-400">${s}</p>
                     </div>
                   </div>
                 </li>
@@ -137,38 +137,38 @@ export class NuevaVacanteView {
   // Paso 1: Información básica
   paso1() {
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 bg-white p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-slate-900 mb-1">Paso 1: Información Básica</h2>
-        <p class="text-sm text-slate-600 mb-5">Define los aspectos fundamentales de la vacante</p>
+      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-5 md:p-6">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">Paso 1: Información Básica</h2>
+        <p class="text-sm text-slate-600 dark:text-gray-300 mb-5">Define los aspectos fundamentales de la vacante</p>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Título del puesto -->
           <div>
-            <label class="text-sm font-medium text-slate-700">Título del puesto</label>
+            <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Título del puesto</label>
             <input id="titulo" type="text" placeholder="Ej: Desarrollador Frontend Senior…"
-              class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]"
+              class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400"
               value="${this.escape(this.state.titulo)}"/>
-            <p class="text-xs text-slate-500 mt-1">Sé específico. Un buen título atrae a los candidatos correctos.</p>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-1">Sé específico. Un buen título atrae a los candidatos correctos.</p>
           </div>
 
           <!-- Justificación -->
           <div>
             <div class="flex items-center justify-between">
-              <label class="text-sm font-medium text-slate-700">Justificación de la vacante *</label>
-              <span class="text-xs text-slate-400"><span id="justCount">0</span>/20 caracteres</span>
+              <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Justificación de la vacante *</label>
+              <span class="text-xs text-slate-400 dark:text-gray-500"><span id="justCount">0</span>/20 caracteres</span>
             </div>
             <textarea id="justificacion" rows="5" placeholder="Explica por qué es necesario este puesto…"
-              class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">${this.escape(
+              class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">${this.escape(
                 this.state.justificacion
               )}</textarea>
-            <p class="text-xs text-slate-500 mt-1">Mínimo 20 caracteres.</p>
+            <p class="text-xs text-slate-500 dark:text-gray-400 mt-1">Mínimo 20 caracteres.</p>
           </div>
 
           <!-- Departamento -->
           <div>
-            <label class="text-sm font-medium text-slate-700">Departamento *</label>
+            <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Departamento *</label>
             <select id="depto"
-              class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">
+              class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white">
               ${this.option(this.state.depto, "", "Selecciona el departamento")}
               ${this.option(this.state.depto, "Desarrollo de Software")}
               ${this.option(this.state.depto, "Diseño")}
@@ -179,24 +179,24 @@ export class NuevaVacanteView {
 
           <!-- Prioridad -->
           <div>
-            <label class="text-sm font-medium text-slate-700">Prioridad de contratación *</label>
+            <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Prioridad de contratación *</label>
             <div class="mt-2 grid grid-cols-3 gap-2">
               ${this.priorityButton("alta")}
               ${this.priorityButton("media")}
               ${this.priorityButton("baja")}
             </div>
-            <div class="mt-2 text-xs text-slate-600">
-              <span class="inline-flex items-center gap-2 rounded-lg bg-yellow-50 px-2 py-1 ring-1 ring-yellow-200">
-                <span class="text-yellow-600">•</span> Media: proceso estándar, 4–6 semanas.
+            <div class="mt-2 text-xs text-slate-600 dark:text-gray-300">
+              <span class="inline-flex items-center gap-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 px-2 py-1 ring-1 ring-yellow-200 dark:ring-yellow-800">
+                <span class="text-yellow-600 dark:text-yellow-400">•</span> Media: proceso estándar, 4–6 semanas.
               </span>
             </div>
           </div>
         </div>
 
         <!-- Tips -->
-        <div class="mt-6 rounded-xl bg-emerald-50 ring-1 ring-emerald-200 p-4">
-          <p class="text-sm font-semibold text-emerald-700">💡 Tips para un mejor resultado</p>
-          <ul class="mt-2 text-sm text-emerald-800 list-disc pl-5 space-y-1">
+        <div class="mt-6 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 ring-1 ring-emerald-200 dark:ring-emerald-800 p-4">
+          <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-400">💡 Tips para un mejor resultado</p>
+          <ul class="mt-2 text-sm text-emerald-800 dark:text-emerald-300 list-disc pl-5 space-y-1">
             <li>Usa títulos específicos y descriptivos</li>
             <li>Incluye el nivel de experiencia en el título</li>
             <li>La justificación debe ser clara y objetiva</li>
@@ -209,31 +209,31 @@ export class NuevaVacanteView {
   // Paso 2: Detalles del puesto
   paso2() {
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 bg-white p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-slate-900 mb-1">Paso 2: Detalles del Puesto</h2>
-        <p class="text-sm text-slate-600 mb-5">Define características específicas del puesto.</p>
+      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-5 md:p-6">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">Paso 2: Detalles del Puesto</h2>
+        <p class="text-sm text-slate-600 dark:text-gray-300 mb-5">Define características específicas del puesto.</p>
 
         <div class="space-y-6">
           <!-- Descripción -->
           <div>
-            <label class="text-sm font-medium text-slate-700">Descripción del puesto *</label>
+            <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Descripción del puesto *</label>
             <textarea id="descripcion" rows="4" placeholder="Describe responsabilidades, objetivos y cómo contribuirá…"
-              class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">${this.escape(
+              class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">${this.escape(
                 this.state.descripcion
               )}</textarea>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="text-sm font-medium text-slate-700">Ubicación</label>
+              <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Ubicación</label>
               <input id="ubicacion" type="text" placeholder="Ciudad, Estado / Remoto"
-                class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]"
+                class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400"
                 value="${this.escape(this.state.ubicacion)}"/>
             </div>
             <div>
-              <label class="text-sm font-medium text-slate-700">Tipo de empleo *</label>
+              <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Tipo de empleo *</label>
               <select id="tipoEmpleo"
-                class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">
+                class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">
                 ${this.option(this.state.tipoEmpleo, "", "Selecciona tipo")}
                 ${this.option(this.state.tipoEmpleo, "Tiempo completo")}
                 ${this.option(this.state.tipoEmpleo, "Medio tiempo")}
@@ -241,9 +241,9 @@ export class NuevaVacanteView {
               </select>
             </div>
             <div>
-              <label class="text-sm font-medium text-slate-700">Experiencia requerida *</label>
+              <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Experiencia requerida *</label>
               <select id="experiencia"
-                class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">
+                class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">
                 ${this.option(this.state.experiencia, "", "Selecciona nivel")}
                 ${this.option(this.state.experiencia, "0-2 años")}
                 ${this.option(this.state.experiencia, "3-5 años")}
@@ -253,22 +253,22 @@ export class NuevaVacanteView {
           </div>
 
           <!-- Compensación -->
-          <div class="rounded-xl ring-1 ring-black/5 p-4 bg-slate-50">
-            <p class="text-sm font-semibold text-slate-800 mb-3">Compensación (opcional pero recomendado)</p>
+          <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 p-4 bg-slate-50 dark:bg-gray-700">
+            <p class="text-sm font-semibold text-slate-800 dark:text-white mb-3">Compensación (opcional pero recomendado)</p>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div>
-                <label class="text-sm text-slate-700">Salario mínimo</label>
-                <input id="salarioMin" type="number" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-[#6D28D9]"
+                <label class="text-sm text-slate-700 dark:text-gray-300">Salario mínimo</label>
+                <input id="salarioMin" type="number" class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white"
                   value="${this.escape(this.state.salarioMin)}"/>
               </div>
               <div>
-                <label class="text-sm text-slate-700">Salario máximo</label>
-                <input id="salarioMax" type="number" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-[#6D28D9]"
+                <label class="text-sm text-slate-700 dark:text-gray-300">Salario máximo</label>
+                <input id="salarioMax" type="number" class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white"
                   value="${this.escape(this.state.salarioMax)}"/>
               </div>
               <div>
-                <label class="text-sm text-slate-700">Moneda</label>
-                <select id="moneda" class="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-[#6D28D9]">
+                <label class="text-sm text-slate-700 dark:text-gray-300">Moneda</label>
+                <select id="moneda" class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white">
                   ${this.option(this.state.moneda, "MXN")}
                   ${this.option(this.state.moneda, "USD")}
                 </select>
@@ -283,34 +283,34 @@ export class NuevaVacanteView {
   // Paso 3: Requisitos y beneficios
   paso3() {
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 bg-white p-5 md:p-6">
-        <h2 class="text-lg font-semibold text-slate-900 mb-1">Paso 3: Requisitos y Beneficios</h2>
-        <p class="text-sm text-slate-600 mb-5">Define requisitos específicos y beneficios de la vacante.</p>
+      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-5 md:p-6">
+        <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-1">Paso 3: Requisitos y Beneficios</h2>
+        <p class="text-sm text-slate-600 dark:text-gray-300 mb-5">Define requisitos específicos y beneficios de la vacante.</p>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Requisitos -->
-          <div class="rounded-xl ring-1 ring-black/5 p-4">
-            <h3 class="font-semibold text-slate-800 mb-3">Requisitos del puesto</h3>
-            <ul id="reqList" class="space-y-2 text-sm text-slate-700">
-              ${this.state.requisitos.map((r) => `<li class="px-2 py-1 rounded bg-slate-50">${this.escape(r)}</li>`).join("")}
+          <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 p-4">
+            <h3 class="font-semibold text-slate-800 dark:text-white mb-3">Requisitos del puesto</h3>
+            <ul id="reqList" class="space-y-2 text-sm text-slate-700 dark:text-gray-300">
+              ${this.state.requisitos.map((r) => `<li class="px-2 py-1 rounded bg-slate-50 dark:bg-gray-700 text-slate-900 dark:text-white">${this.escape(r)}</li>`).join("")}
             </ul>
             <div class="mt-3 flex gap-2">
               <input id="reqInput" type="text" placeholder="Escribe un nuevo requisito…"
-                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">
-              <button id="addReq" class="rounded-xl px-3 py-2 ring-1 ring-black/5 bg-white hover:bg-slate-50">Agregar</button>
+                class="flex-1 rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 focus:bg-white dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">
+              <button id="addReq" class="rounded-xl px-3 py-2 ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300">Agregar</button>
             </div>
           </div>
 
           <!-- Beneficios -->
-          <div class="rounded-xl ring-1 ring-black/5 p-4">
-            <h3 class="font-semibold text-slate-800 mb-3">Beneficios y ventajas</h3>
-            <ul id="benList" class="space-y-2 text-sm text-slate-700">
-              ${this.state.beneficios.map((b) => `<li class="px-2 py-1 rounded bg-slate-50">${this.escape(b)}</li>`).join("")}
+          <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 p-4">
+            <h3 class="font-semibold text-slate-800 dark:text-white mb-3">Beneficios y ventajas</h3>
+            <ul id="benList" class="space-y-2 text-sm text-slate-700 dark:text-gray-300">
+              ${this.state.beneficios.map((b) => `<li class="px-2 py-1 rounded bg-slate-50 dark:bg-gray-700 text-slate-900 dark:text-white">${this.escape(b)}</li>`).join("")}
             </ul>
             <div class="mt-3 flex gap-2">
               <input id="benInput" type="text" placeholder="Escribe un nuevo beneficio…"
-                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus:bg-white focus:ring-2 focus:ring-[#6D28D9]">
-              <button id="addBen" class="rounded-xl px-3 py-2 ring-1 ring-black/5 bg-white hover:bg-slate-50">Agregar</button>
+                class="flex-1 rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 focus:bg-white dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">
+              <button id="addBen" class="rounded-xl px-3 py-2 ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300">Agregar</button>
             </div>
           </div>
         </div>
@@ -322,7 +322,7 @@ export class NuevaVacanteView {
   paso4() {
     const s = this.state;
     return `
-      <div class="rounded-2xl ring-1 ring-black/5 bg-white p-5 md:p-6">
+      <div class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-5 md:p-6">
         <div class="rounded-xl bg-gradient-to-r from-[#5B21B6] to-[#7C3AED] text-white p-4 mb-5 flex items-center justify-between">
           <p class="font-medium">Análisis de Completitud con IA</p>
           <span class="text-sm opacity-90">Analizando…</span>
@@ -330,7 +330,7 @@ export class NuevaVacanteView {
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-8">
-            <article class="rounded-xl ring-1 ring-black/5 p-5">
+            <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 p-5">
               <div class="flex items-center gap-3 mb-2">
                 <span class="inline-flex rounded-full bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5">Media Prioridad</span>
               </div>
@@ -347,10 +347,10 @@ export class NuevaVacanteView {
                 </p>` : ""}
 
               <h4 class="mt-5 font-semibold text-slate-900">Descripción del Puesto</h4>
-              <p class="text-slate-700 mt-1 whitespace-pre-wrap">${this.safe(s.descripcion, "Describe las responsabilidades principales…")}</p>
+              <p class="text-slate-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">${this.safe(s.descripcion, "Describe las responsabilidades principales…")}</p>
 
               <h4 class="mt-5 font-semibold text-slate-900">Requisitos del Puesto</h4>
-              <ul class="mt-1 list-disc pl-5 text-slate-700 space-y-1">
+              <ul class="mt-1 list-disc pl-5 text-slate-700 dark:text-gray-300 space-y-1">
                 ${s.requisitos.map((r) => `<li>${this.escape(r)}</li>`).join("")}
               </ul>
             </article>
@@ -358,10 +358,10 @@ export class NuevaVacanteView {
 
           <!-- Rail derecho -->
           <aside class="lg:col-span-4 space-y-4">
-            <div class="rounded-xl ring-1 ring-black/5 p-4">
+            <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 p-4">
               <p class="font-semibold text-slate-900">Opciones de Publicación</p>
               <div class="mt-3 space-y-2 text-sm">
-                <button class="w-full rounded-xl ring-1 ring-black/5 bg-white px-3 py-2 text-slate-700 hover:bg-slate-50">Guardar Borrador</button>
+                <button class="w-full rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 py-2 text-slate-700 dark:text-gray-300 hover:bg-slate-50">Guardar Borrador</button>
                 <button class="w-full rounded-xl ring-1 ring-[#004176]/20 bg-[#004176]/5 px-3 py-2 text-[#004176] hover:bg-[#004176]/10">Enviar para Aprobación</button>
                 <button class="w-full rounded-xl bg-rose-600 text-white px-3 py-2 hover:opacity-95">Publicar Vacante</button>
               </div>
@@ -377,10 +377,10 @@ export class NuevaVacanteView {
     const labels = { alta: "Alta", media: "Media", baja: "Baja" };
     const active = this.state.prioridad === level;
     const base =
-      "w-full rounded-xl px-3 py-2 text-center ring-1 ring-black/5";
+      "w-full rounded-xl px-3 py-2 text-center ring-1 ring-black/5 dark:ring-white/10";
     const styles = active
-      ? "bg-[#004176] text-white"
-      : "bg-slate-50 text-slate-700 hover:bg-slate-100";
+      ? "bg-[#004176] dark:bg-blue-600 text-white"
+      : "bg-slate-50 dark:bg-gray-700 text-slate-700 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-600";
     return `<button type="button" data-priority="${level}" class="${base} ${styles}">${labels[level]}</button>`;
   }
 

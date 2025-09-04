@@ -1,25 +1,36 @@
-import { DarkModeManager } from '../utils/darkMode.js';
+import { DarkModeManager } from "../utils/darkMode.js";
 
 export class Header {
   constructor(sidebar) {
     this.sidebar = sidebar;
+    this.router = null; // Se inyecta desde App
     this.darkModeManager = new DarkModeManager();
     this.init();
+  }
+
+  // Para que App conecte el router
+  setRouter(router) {
+    this.router = router;
   }
 
   init() {
     this.render();
     this.attachEventListeners();
+    // Asegurar que el icono se actualice después del render
+    setTimeout(() => {
+      this.darkModeManager.updateThemeElements();
+    }, 100);
   }
 
   render() {
-    const headerElement = document.createElement('header');
-    headerElement.id = 'header';
-    headerElement.className = 'bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 z-10';
-    
+    const headerElement = document.createElement("header");
+    headerElement.id = "header";
+    headerElement.className =
+      "bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-4 z-10";
+
     headerElement.innerHTML = `
       <!-- Left Section -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-4 flex-1">
         <!-- Hamburger Menu -->
         <button 
           id="sidebar-toggle" 
@@ -35,21 +46,31 @@ export class Header {
           <i class="fas fa-chevron-right text-xs text-gray-400"></i>
           <span id="current-section" class="text-gray-700 dark:text-gray-300 font-medium">Dashboard</span>
         </nav>
+
+        <!-- Search -->
+        <div class="hidden lg:flex items-center ml-6">
+          <div class="relative">
+            <input 
+              id="global-search"
+              type="text" 
+              placeholder="Buscar vistas..." 
+              class="w-80 pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 focus:border-transparent"
+            >
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            
+            <!-- Search Results Dropdown -->
+            <div id="search-results" class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 hidden">
+              <div class="p-2">
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Acceso rápido</div>
+                <div id="search-items" class="space-y-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Right Section -->
       <div class="flex items-center space-x-2">
-        <!-- Search -->
-        <div class="hidden lg:flex items-center">
-          <div class="relative">
-            <input 
-              type="text" 
-              placeholder="Buscar..." 
-              class="w-64 pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-          </div>
-        </div>
 
         <!-- Dark Mode Toggle -->
         <button 
@@ -218,58 +239,80 @@ export class Header {
     `;
 
     // Insert header at the beginning of the app
-    const app = document.getElementById('app');
+    const app = document.getElementById("app");
     app.insertBefore(headerElement, app.firstChild);
   }
 
   attachEventListeners() {
     // Sidebar toggle
-    document.getElementById('sidebar-toggle').addEventListener('click', () => {
+    document.getElementById("sidebar-toggle").addEventListener("click", () => {
       this.sidebar.toggle();
     });
 
     // Dark mode toggle
-    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
-      this.toggleDarkMode();
-    });
+    document
+      .getElementById("dark-mode-toggle")
+      .addEventListener("click", () => {
+        this.toggleDarkMode();
+      });
 
     // Notifications dropdown
-    this.setupDropdown('notifications-toggle', 'notifications-dropdown');
+    this.setupDropdown("notifications-toggle", "notifications-dropdown");
 
     // Messages dropdown
-    this.setupDropdown('messages-toggle', 'messages-dropdown');
+    this.setupDropdown("messages-toggle", "messages-dropdown");
 
     // Profile dropdown
-    this.setupDropdown('profile-toggle', 'profile-dropdown');
+    this.setupDropdown("profile-toggle", "profile-dropdown");
+
+    // Global search functionality
+    this.setupGlobalSearch();
 
     // Close dropdowns when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#notifications-toggle') && !e.target.closest('#notifications-dropdown')) {
-        document.getElementById('notifications-dropdown').classList.add('hidden');
+    document.addEventListener("click", (e) => {
+      if (
+        !e.target.closest("#notifications-toggle") &&
+        !e.target.closest("#notifications-dropdown")
+      ) {
+        document
+          .getElementById("notifications-dropdown")
+          .classList.add("hidden");
       }
-      if (!e.target.closest('#messages-toggle') && !e.target.closest('#messages-dropdown')) {
-        document.getElementById('messages-dropdown').classList.add('hidden');
+      if (
+        !e.target.closest("#messages-toggle") &&
+        !e.target.closest("#messages-dropdown")
+      ) {
+        document.getElementById("messages-dropdown").classList.add("hidden");
       }
-      if (!e.target.closest('#profile-toggle') && !e.target.closest('#profile-dropdown')) {
-        document.getElementById('profile-dropdown').classList.add('hidden');
+      if (
+        !e.target.closest("#profile-toggle") &&
+        !e.target.closest("#profile-dropdown")
+      ) {
+        document.getElementById("profile-dropdown").classList.add("hidden");
+      }
+      if (
+        !e.target.closest("#global-search") &&
+        !e.target.closest("#search-results")
+      ) {
+        document.getElementById("search-results").classList.add("hidden");
       }
     });
   }
 
   setupDropdown(toggleId, dropdownId) {
-    document.getElementById(toggleId).addEventListener('click', (e) => {
+    document.getElementById(toggleId).addEventListener("click", (e) => {
       e.stopPropagation();
       const dropdown = document.getElementById(dropdownId);
-      
+
       // Close other dropdowns
-      document.querySelectorAll('[id$="-dropdown"]').forEach(d => {
+      document.querySelectorAll('[id$="-dropdown"]').forEach((d) => {
         if (d.id !== dropdownId) {
-          d.classList.add('hidden');
+          d.classList.add("hidden");
         }
       });
-      
+
       // Toggle current dropdown
-      dropdown.classList.toggle('hidden');
+      dropdown.classList.toggle("hidden");
     });
   }
 
@@ -278,9 +321,120 @@ export class Header {
   }
 
   updateBreadcrumb(sectionName) {
-    const currentSection = document.getElementById('current-section');
+    const currentSection = document.getElementById("current-section");
     if (currentSection) {
       currentSection.textContent = sectionName;
     }
+  }
+
+  setupGlobalSearch() {
+    const searchInput = document.getElementById("global-search");
+    const searchResults = document.getElementById("search-results");
+    const searchItems = document.getElementById("search-items");
+
+    // Definir las vistas disponibles (coinciden con las rutas del router)
+    const views = [
+      { name: "Dashboard", view: "dashboard", icon: "fas fa-chart-line", description: "Panel principal con métricas" },
+      { name: "Vacantes", view: "vacantes", icon: "fas fa-briefcase", description: "Gestión de vacantes" },
+      { name: "Candidatos", view: "candidatos", icon: "fas fa-users", description: "Base de datos de candidatos" },
+      { name: "Nueva Vacante", view: "nueva-vacante", icon: "fas fa-plus-circle", description: "Crear nueva vacante" },
+      { name: "Diccionario", view: "diccionario", icon: "fas fa-book", description: "Diccionario de competencias" },
+      { name: "Administración", view: "administracion", icon: "fas fa-cog", description: "Configuración del sistema" },
+      { name: "Análisis", view: "analisis", icon: "fas fa-chart-bar", description: "Reportes y analytics" },
+      { name: "Mi Organización", view: "mi-organizacion", icon: "fas fa-building", description: "Gestión organizacional" },
+      { name: "Usuarios", view: "usuarios", icon: "fas fa-user-cog", description: "Gestión de usuarios" },
+      { name: "Mis Procesos", view: "mis-procesos", icon: "fas fa-tasks", description: "Procesos personales" }
+    ];
+
+    // Función para filtrar y mostrar resultados
+    const showResults = (query) => {
+      if (!query.trim()) {
+        searchResults.classList.add("hidden");
+        return;
+      }
+
+      const filtered = views.filter(view => 
+        view.name.toLowerCase().includes(query.toLowerCase()) ||
+        view.description.toLowerCase().includes(query.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        searchResults.classList.add("hidden");
+        return;
+      }
+
+      searchItems.innerHTML = filtered.map(view => `
+        <div class="search-item flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" data-view="${view.view}">
+          <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-[#004176]/10 dark:bg-blue-600/20 flex items-center justify-center mr-3">
+            <i class="${view.icon} text-[#004176] dark:text-blue-400 text-sm"></i>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-gray-900 dark:text-white">${view.name}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">${view.description}</div>
+          </div>
+        </div>
+      `).join("");
+
+      searchResults.classList.remove("hidden");
+    };
+
+    // Event listeners
+    searchInput.addEventListener("input", (e) => {
+      showResults(e.target.value);
+    });
+
+    searchInput.addEventListener("focus", (e) => {
+      if (e.target.value.trim()) {
+        showResults(e.target.value);
+      }
+    });
+
+    // Manejar clicks en los resultados
+    searchItems.addEventListener("click", (e) => {
+      const searchItem = e.target.closest(".search-item");
+      if (searchItem) {
+        const view = searchItem.dataset.view;
+        if (this.router) {
+          this.router.navigate(view);
+        } else {
+          // Fallback si no hay router
+          window.location.hash = `#/${view}`;
+        }
+        searchInput.value = "";
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    // Cerrar resultados al hacer click fuera
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest("#global-search") && !e.target.closest("#search-results")) {
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    // Manejar tecla Enter
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const firstItem = searchItems.querySelector(".search-item");
+        if (firstItem) {
+          const view = firstItem.dataset.view;
+          if (this.router) {
+            this.router.navigate(view);
+          } else {
+            // Fallback si no hay router
+            window.location.hash = `#/${view}`;
+          }
+          searchInput.value = "";
+          searchResults.classList.add("hidden");
+        }
+      }
+      
+      // Manejar tecla Escape
+      if (e.key === "Escape") {
+        searchInput.value = "";
+        searchResults.classList.add("hidden");
+        searchInput.blur();
+      }
+    });
   }
 }

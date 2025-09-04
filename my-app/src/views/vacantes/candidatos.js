@@ -70,30 +70,30 @@ export class CandidatosView {
           <!-- header -->
           <header class="mb-4">
             <div class="flex items-center gap-3">
-              <h1 class="text-2xl md:text-3xl font-semibold text-slate-900">Candidatos</h1>
+              <h1 class="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-white">Candidatos</h1>
               <span class="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5">NEW</span>
             </div>
             <p class="mt-1 text-slate-600">Gestiona y evalúa a todos los candidatos de tu organización</p>
           </header>
 
           <!-- filtros + actions -->
-          <section class="rounded-2xl ring-1 ring-black/5 bg-white p-3 md:p-4 mb-4">
+          <section class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-3 md:p-4 mb-4">
             <div class="flex flex-wrap items-center gap-3">
               <!-- search -->
               <div class="flex-1 min-w-[260px]">
-                <div class="flex h-11 items-center gap-2 rounded-xl ring-1 ring-slate-200 bg-slate-50 px-3">
-                  <span class="text-slate-500">🔎</span>
-                  <input id="fQuery" type="text" placeholder="Buscar candidatos..." class="w-full bg-transparent outline-none">
+                <div class="flex h-11 items-center gap-2 rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-slate-50 dark:bg-gray-700 px-3">
+                  <span class="text-slate-500 dark:text-gray-400">🔎</span>
+                  <input id="fQuery" type="text" placeholder="Buscar candidatos..." class="w-full bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">
                 </div>
               </div>
 
               <!-- vacante -->
-              <select id="fJob" class="shrink-0 h-11 w-[200px] rounded-xl ring-1 ring-slate-200 bg-white px-3">
+              <select id="fJob" class="shrink-0 h-11 w-[200px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
                 <!-- options dinámicas -->
               </select>
 
               <!-- estado -->
-              <select id="fStatus" class="shrink-0 h-11 w-[180px] rounded-xl ring-1 ring-slate-200 bg-white px-3">
+              <select id="fStatus" class="shrink-0 h-11 w-[180px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
                 <option value="all">Todos los estados</option>
                 <option value="NUEVO">Nuevo</option>
                 <option value="EN_REVISION">En revisión</option>
@@ -103,7 +103,7 @@ export class CandidatosView {
               </select>
 
               <!-- ordenar -->
-              <select id="fSort" class="shrink-0 h-11 w-[160px] rounded-xl ring-1 ring-slate-200 bg-white px-3">
+              <select id="fSort" class="shrink-0 h-11 w-[160px] rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-slate-900 dark:text-white">
                 <option value="recent">Ordenar por</option>
                 <option value="match-desc">Match (↓)</option>
                 <option value="match-asc">Match (↑)</option>
@@ -111,14 +111,14 @@ export class CandidatosView {
               </select>
 
               <div class="ml-auto flex items-center gap-2">
-                <button id="btnExport" class="h-11 rounded-xl ring-1 ring-black/5 bg-white px-3 hover:bg-slate-50 inline-flex items-center gap-2">📈 Exportar</button>
+                <button id="btnExport" class="h-11 rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 px-3 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-700 dark:text-gray-300 inline-flex items-center gap-2">📈 Exportar</button>
                 <button id="btnAdd" class="h-11 rounded-xl bg-sky-600 text-white px-4 hover:opacity-95 inline-flex items-center gap-2">➕ Agregar Candidato</button>
               </div>
             </div>
           </section>
 
           <!-- tabla -->
-          <section class="rounded-2xl ring-1 ring-black/5 bg-white">
+          <section class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800">
             <div class="overflow-x-auto">
               <table class="w-full min-w-[1100px] table-auto text-sm">
                 <thead class="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wide">
@@ -259,7 +259,7 @@ export class CandidatosView {
           <div class="flex items-center gap-3">
             ${this.avatar(c.name)}
             <div>
-              <div class="font-medium text-slate-900 leading-5">${c.name}</div>
+              <div class="font-medium text-slate-900 dark:text-white leading-5">${c.name}</div>
               <div class="text-slate-500 text-xs">${c.email}</div>
             </div>
           </div>
@@ -267,7 +267,7 @@ export class CandidatosView {
 
         <!-- vacante -->
         <td class="px-4 py-3">
-          <div class="text-slate-900 font-medium">${c.job.title}</div>
+          <div class="text-slate-900 dark:text-white font-medium">${c.job.title}</div>
           <div class="text-slate-500 text-xs">${c.job.dept}</div>
         </td>
 

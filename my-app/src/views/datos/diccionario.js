@@ -10,20 +10,20 @@ export class DiccionarioView {
         <div class="max-w-7xl mx-auto">
           <!-- Header -->
           <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               <i class="fas fa-book text-blue-600 mr-3"></i>
               Diccionario de Datos
             </h1>
-            <p class="text-gray-600">Gestiona catálogos, competencias y datos maestros del sistema</p>
+            <p class="text-gray-600 dark:text-gray-300">Gestiona catálogos, competencias y datos maestros del sistema</p>
           </div>
 
           <!-- Coming Soon Card -->
-          <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
             <div class="mb-6">
               <i class="fas fa-database text-6xl text-blue-500 mb-4"></i>
             </div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Diccionario de Datos Próximamente</h2>
-            <p class="text-gray-600 mb-6 max-w-md mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Diccionario de Datos Próximamente</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
               Pronto podrás gestionar todos los catálogos y datos maestros del sistema desde una interfaz centralizada.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">

@@ -16,10 +16,12 @@ export class DarkModeManager {
   }
 
   applyTheme() {
+    const html = document.documentElement;
+    
     if (this.isDark) {
-      document.documentElement.classList.add('dark');
+      html.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      html.classList.remove('dark');
     }
     
     this.updateThemeElements();

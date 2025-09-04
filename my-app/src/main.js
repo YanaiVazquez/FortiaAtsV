@@ -27,6 +27,9 @@ class App {
 
       // Conecta router -> sidebar para usar router.navigate en clicks
       sidebar.setRouter(this.router);
+      
+      // Conecta router -> header para el buscador global
+      header.setRouter(this.router);
 
       // Arranca router (lee la URL y pinta la vista correspondiente)
       this.router.start();
