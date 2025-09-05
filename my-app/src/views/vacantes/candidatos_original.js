@@ -9,10 +9,20 @@ export class CandidatosView {
       priority: "all",
       sort: "recent",
       insightsTick: 0,
-      isMaximized: false, // Estado de maximización
       // Paginación
       currentPage: 1,
       itemsPerPage: 10,
+      // Jobs/Vacantes disponibles
+      jobs: [
+        { id: "j1", title: "Senior React Developer" },
+        { id: "j2", title: "UX/UI Designer" },
+        { id: "j3", title: "Product Manager" },
+        { id: "j4", title: "Backend Developer" },
+        { id: "j5", title: "DevOps Engineer" },
+        { id: "j6", title: "Data Scientist" },
+        { id: "j7", title: "Marketing Manager" },
+        { id: "j8", title: "Sales Manager" }
+      ],
       candidates: [
         {
           id: "c1",
@@ -215,6 +225,16 @@ export class CandidatosView {
       ],
     };
 
+    // Inicializar kanban con los candidatos para analytics
+    this.kanban = {
+      items: this.state.candidates.map(candidate => ({
+        ...candidate,
+        jobId: this.state.jobs.find(job => job.title === candidate.jobApplied)?.id || "j1",
+        jobTitle: candidate.jobApplied,
+        name: candidate.name
+      }))
+    };
+
     this.injectStyles();
     this.render();
     this.bindStatic();
@@ -286,52 +306,6 @@ export class CandidatosView {
             grid-template-columns: repeat(3, 1fr);
           }
         }
-
-        /* Estilos para vista maximizada */
-        .maximized-view {
-          transition: all 0.3s ease-in-out;
-        }
-        
-        .maximized-view #candidatesCardsGrid {
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-          gap: 1rem !important;
-        }
-        
-        /* Más columnas en pantallas grandes cuando está maximizado */
-        @media (min-width: 1280px) {
-          .maximized-view #candidatesCardsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-          }
-        }
-        
-        @media (min-width: 1536px) {
-          .maximized-view #candidatesCardsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
-          }
-        }
-        
-        @media (min-width: 1920px) {
-          .maximized-view #candidatesCardsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
-          }
-        }
-        
-        .maximized-view .candidate-card {
-          transform: scale(1.01);
-        }
-        
-        .maximized-view .candidate-card:hover {
-          transform: scale(1.03);
-        }
-
-        /* Animación del botón de maximizar */
-        #maximizeInsights {
-          transition: all 0.2s ease;
-        }
-        
-        #maximizeInsights:hover {
-          transform: scale(1.1);
-        }
       `;
       document.head.appendChild(style);
     }
@@ -354,8 +328,10 @@ export class CandidatosView {
             <p class="text-slate-600 dark:text-gray-400">Gestiona y evalúa candidatos con inteligencia artificial</p>
           </header>
 
+
+
           <!-- Resumen de métricas -->
-          <section id="metricsSection" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-white dark:bg-gray-800 rounded-xl p-4 ring-1 ring-black/5 dark:ring-white/10">
               <div class="flex items-center justify-between">
                 <div>
@@ -463,32 +439,19 @@ export class CandidatosView {
           <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Izquierda -->
             <div class="xl:col-span-10 space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <!-- Tabs de navegación -->
-                <div class="flex flex-wrap items-center gap-2">
-                  <button data-view="list" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
-                    📋 Listado
-                  </button>
-                  <button data-view="cards" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
-                    🃏 Cards
-                  </button>
-                  <button data-view="pipeline" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
-                    🔄 Pipeline
-                  </button>
-                  <button data-view="analytics" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
-                    📊 Analytics
-                  </button>
-                </div>
-                
-                <!-- Botón de maximizar -->
-                <div class="flex items-center gap-2 border-l border-slate-200 dark:border-gray-600 pl-3 ml-2">
-                  <span class="text-xs text-slate-500 dark:text-gray-400 font-medium">Vista:</span>
-                  <button id="maximizeInsights" class="p-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-blue-600 dark:text-blue-400 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-800/30 dark:hover:to-indigo-800/30 transition-all duration-200 ring-1 ring-blue-200 dark:ring-blue-700/50 hover:ring-blue-300 dark:hover:ring-blue-600 hover:scale-105" title="Maximizar vista">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                    </svg>
-                  </button>
-                </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button data-view="list" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
+                  📋 Listado
+                </button>
+                <button data-view="cards" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
+                  🃏 Cards
+                </button>
+                <button data-view="pipeline" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
+                  🔄 Pipeline
+                </button>
+                <button data-view="analytics" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors">
+                  📊 Analytics
+                </button>
               </div>
               <div id="viewContainer"></div>
             </div>
@@ -506,43 +469,25 @@ export class CandidatosView {
                     <p class="font-medium text-slate-800 dark:text-white">AI Insights</p>
                   </div>
 
-                  <button id="btnInsights" class="rounded-lg border border-slate-200 dark:border-gray-600 px-2.5 py-1.5 text-xs text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 active:scale-[.98] transition" aria-label="Actualizar insights">
-                    <span class="inline-block">🔄</span> Actualizar
-                  </button>
+                  <div class="flex items-center gap-1">
+                    <button id="refreshInsights" class="p-1.5 rounded-lg bg-white/50 dark:bg-gray-800/50 text-slate-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80 transition-colors" title="Actualizar insights">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                      </svg>
+                    </button>
+                    <button id="maximizeInsights" class="p-1.5 rounded-lg bg-white/50 dark:bg-gray-800/50 text-slate-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80 transition-colors" title="Maximizar panel">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- List (altura controlada + scroll) -->
                 <div class="min-h-[180px] max-h-80 overflow-y-auto pr-1">
-               <ul id="insightsList" class="space-y-2 text-sm">
-  <!-- Recomendación -->
-  <li class="rounded-lg bg-blue-50 dark:bg-blue-900/30 ring-blue-100 dark:ring-blue-800 ring-1 p-3">
-    <p class="font-medium text-slate-900 dark:text-white">Recomendación</p>
-    <p class="text-slate-700 dark:text-gray-300 text-sm">
-      <span class="font-semibold">12 candidatos</span> tienen alto potencial para roles de desarrollo. 
-      Considera priorizarlos en el proceso.
-    </p>
-  </li>
-
-  <!-- Tendencia -->
-  <li class="rounded-lg bg-emerald-50 dark:bg-emerald-900/30 ring-emerald-100 dark:ring-emerald-800 ring-1 p-3">
-    <p class="font-medium text-slate-900 dark:text-white">Tendencia</p>
-    <p class="text-slate-700 dark:text-gray-300 text-sm">
-      El score promedio de candidatos ha 
-      <span class="font-semibold text-emerald-600 dark:text-emerald-400">mejorado 15%</span> esta semana. 
-      Excelente calidad de aplicaciones.
-    </p>
-  </li>
-
-  <!-- Alerta -->
-  <li class="rounded-lg bg-amber-50 dark:bg-amber-900/30 ring-amber-100 dark:ring-amber-800 ring-1 p-3">
-    <p class="font-medium text-slate-900 dark:text-white">Alerta</p>
-    <p class="text-slate-700 dark:text-gray-300 text-sm">
-      <span class="font-semibold">8 candidatos</span> llevan más de 2 semanas sin contacto. 
-      Considera hacer seguimiento.
-    </p>
-  </li>
-</ul>
-
+                  <ul id="candidateInsightsList" class="space-y-2 text-sm">
+                    <!-- Insights dinámicos -->
+                  </ul>
                 </div>
               </div>
             </aside>
@@ -607,13 +552,6 @@ export class CandidatosView {
       ?.addEventListener("click", () => {
         this.maximizeInsights();
       });
-
-    // Manejar tecla ESC para salir del modo maximizado
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && this.state.isMaximized) {
-        this.maximizeInsights(); // Alternar para salir del modo maximizado
-      }
-    });
   }
 
   updateTabStates() {
@@ -716,58 +654,74 @@ export class CandidatosView {
 
   renderInsights() {
     const insights = [
-      {
-        t: "Recomendación",
-        c: "María García tiene score IA de 92%. Considera priorizarla para entrevista inmediata por su alta compatibilidad.",
-        cls: "bg-blue-50 dark:bg-blue-900/30 ring-blue-100 dark:ring-blue-800",
-      },
-      {
-        t: "Tendencia",
-        c: "Los candidatos con experiencia en React tienen 3× más probabilidad de pasar el screening técnico.",
-        cls: "bg-emerald-50 dark:bg-emerald-900/30 ring-emerald-100 dark:ring-emerald-800",
-      },
-      {
-        t: "Alerta",
-        c: "Sofía Herrera lleva 7 días con oferta pendiente. ¿Hacer seguimiento para cerrar contratación?",
-        cls: "bg-amber-50 dark:bg-amber-900/30 ring-amber-100 dark:ring-amber-800",
-      },
-      {
-        t: "Optimización",
-        c: "Candidatos de Madrid muestran 25% mejor tasa de conversión. Considera enfocar búsquedas en esta ubicación.",
-        cls: "bg-purple-50 dark:bg-purple-900/30 ring-purple-100 dark:ring-purple-800",
-      },
-      {
-        t: "Pipeline",
-        c: "2 candidatos en entrevista y 1 en oferta. Pipeline saludable, mantener velocidad de proceso actual.",
-        cls: "bg-indigo-50 dark:bg-indigo-900/30 ring-indigo-100 dark:ring-indigo-800",
-      },
-      {
-        t: "Análisis",
-        c: "Score IA promedio subió a 88% esta semana. Excelente calidad de candidatos en el pipeline.",
-        cls: "bg-emerald-50 dark:bg-emerald-900/30 ring-emerald-100 dark:ring-emerald-800",
-      },
+      this.insight(
+        "MATCHING · ALTA",
+        "5 candidatos tienen score IA ≥90%",
+        "hace 5 minutos",
+        "alta",
+        true
+      ),
+      this.insight(
+        "PIPELINE · MEDIA",
+        "3 candidatos llevan >7 días en screening",
+        "hace 15 minutos",
+        "media"
+      ),
+      this.insight(
+        "OPTIMIZACIÓN · ALTA",
+        "Candidatos con React tienen 25% más probabilidad de éxito",
+        "hace 30 minutos",
+        "alta",
+        true
+      ),
+      this.insight(
+        "ALERTA · URGENTE",
+        "2 ofertas pendientes de respuesta por >48h",
+        "hace 1 hora",
+        "urgente",
+        true
+      ),
+      this.insight(
+        "TENDENCIA · BAJA",
+        "Score IA promedio subió 8% esta semana",
+        "hace 2 horas",
+        "baja"
+      ),
     ];
 
-    const start = this.state.insightsTick % insights.length;
-    const ordered = [
-      insights[start],
-      insights[(start + 1) % insights.length],
-      insights[(start + 2) % insights.length],
-    ];
+    document.getElementById("candidateInsightsList").innerHTML =
+      insights.join("");
+  }
 
-    const ul = document.getElementById("candidateInsightsList");
-    if (!ul) return;
+  insight(type, text, time, priority, isNew = false) {
+    const colors = {
+      alta: "bg-rose-50 dark:bg-rose-900/10 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800",
+      urgente:
+        "bg-red-50 dark:bg-red-900/10 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800",
+      media:
+        "bg-amber-50 dark:bg-amber-900/10 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+      baja: "bg-blue-50 dark:bg-blue-900/10 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+    };
 
-    ul.innerHTML = ordered
-      .map(
-        (x) => `
-      <li class="rounded-lg ${x.cls} ring-1 p-3">
-        <p class="font-medium text-slate-900 dark:text-white">${x.t}</p>
-        <p class="text-slate-700 dark:text-gray-300 text-sm">${x.c}</p>
+    return `
+      <li class="flex items-start gap-3 p-3 rounded-lg border ${
+        colors[priority]
+      } ${isNew ? "ring-2 ring-violet-200 dark:ring-violet-800" : ""}">
+        <div class="w-2 h-2 rounded-full bg-current mt-2 flex-shrink-0"></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-medium text-xs">${type}</span>
+            ${
+              isNew
+                ? '<span class="px-1.5 py-0.5 bg-violet-100 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300 text-xs rounded-full font-medium">NUEVO</span>'
+                : ""
+            }
+          </div>
+          <p class="text-sm leading-relaxed">${text}</p>
+          <span class="text-xs opacity-75 mt-1 block">${time}</span>
+        </div>
       </li>
-    `
-      )
-      .join("");
+    `;
   }
 
   // ---------- VISTA LISTA ----------
@@ -806,200 +760,415 @@ export class CandidatosView {
     // Event listeners específicos de la vista lista
   }
   // ======== VISTA ANALYTICS ========
-
+  // ---------- ANALYTICS (CANDIDATOS) ----------
   analyticsHTML() {
-    const total = this.kanban?.items?.length || 0;
+    const totalPipeline = this.kanban?.items?.length || 0;
     return `
-  <section class="rounded-2xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 overflow-hidden">
-    <!-- Barra superior -->
-    <div class="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 p-4 md:p-5 text-white">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-lg md:text-xl font-semibold">AI Analysis</h2>
-          <p class="text-white/80 text-sm">Evaluación inteligente de candidatos • ${total} en pipeline</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <select id="anMetric" class="h-10 px-3 rounded-lg bg-white/10 border border-white/20 text-sm">
-            <option value="overall">Score General</option>
-            <option value="skills">Skills Técnicos</option>
-            <option value="exp">Experiencia</option>
-            <option value="edu">Educación</option>
-            <option value="culture">Fit Cultural</option>
-          </select>
-          <button id="anRefresh" class="h-10 px-3 rounded-lg bg-white/10 border border-white/20 text-sm">🔄 Actualizar</button>
-        </div>
+  <section class="rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+    <!-- HERO -->
+    <div class="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 p-5 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-white text-xl md:text-2xl font-semibold">AI Analysis</h2>
+        <p class="text-white/90 text-sm">Evaluación inteligente de candidatos • ${totalPipeline} candidatos en pipeline</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="aaScoreType" class="h-10 rounded-lg bg-white/10 text-white px-3 border border-white/20">
+          <option value="general">Score General</option>
+          <option value="tech">Skills Técnicos</option>
+          <option value="exp">Experiencia</option>
+          <option value="edu">Educación</option>
+          <option value="fit">Fit Cultural</option>
+        </select>
+        <button id="aaRefresh" class="h-10 px-3 rounded-lg bg-white/10 text-white border border-white/20 hover:bg-white/20">🔄 Actualizar</button>
       </div>
     </div>
 
-    <!-- Contenido -->
-    <div class="p-4 md:p-5">
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        
-        <!-- Columna principal -->
-        <div class="xl:col-span-9 space-y-5">
-          <!-- Fila 1: Score + Ranking -->
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            
-            <!-- Score -->
-            <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-              <header class="flex items-center justify-between">
+    <div class="grid grid-cols-12 gap-4 p-4 bg-white dark:bg-gray-800">
+      <!-- Col izquierda -->
+      <div class="col-span-12 lg:col-span-8 space-y-4">
+        <!-- AI Score Analysis + Ranking -->
+        <div class="grid grid-cols-12 gap-4">
+          <!-- Score -->
+          <article class="col-span-12 md:col-span-4 rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <div class="flex items-start justify-between">
               <h3 class="font-semibold text-slate-800 dark:text-white">AI Score Analysis</h3>
-                <button id="anRecalc" 
-                  class="text-xs px-2 py-1 rounded 
-                        border border-slate-200 dark:border-gray-600 
-                        bg-white dark:bg-gray-700 
-                        text-slate-700 dark:text-gray-200 
-                        hover:bg-slate-50 dark:hover:bg-gray-600 
-                        active:scale-[.98] transition">
-                  Recalcular
-                </button>
-              </header>
-              <div class="mt-4 flex items-center gap-4">
-                <div class="relative grid place-items-center w-28 h-28 rounded-full">
-                  <div class="absolute inset-0 rounded-full ring-8 ring-slate-100 dark:ring-gray-700"></div>
-                  <div>
-                    <div id="anScore" class="text-3xl font-bold text-slate-900 dark:text-white">100</div>
-                    <div class="text-xs text-slate-500 dark:text-gray-400 text-center -mt-1">Score IA</div>
-                  </div>
-                </div>
-                <div class="flex-1 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <div class="text-slate-500 dark:text-gray-400">Skills Técnicos</div>
-                    <div class="h-2 bg-slate-200 dark:bg-gray-700 rounded overflow-hidden">
-                      <div id="anBarSkills" class="h-2 bg-indigo-600 dark:bg-indigo-500" style="width:0%"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="text-slate-500 dark:text-gray-400">Experiencia</div>
-                    <div class="h-2 bg-slate-200 dark:bg-gray-700 rounded overflow-hidden">
-                      <div id="anBarExp" class="h-2 bg-indigo-600 dark:bg-indigo-500" style="width:0%"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="text-slate-500 dark:text-gray-400">Educación</div>
-                    <div class="h-2 bg-slate-200 dark:bg-gray-700 rounded overflow-hidden">
-                      <div id="anBarEdu" class="h-2 bg-indigo-600 dark:bg-indigo-500" style="width:0%"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="text-slate-500 dark:text-gray-400">Fit Cultural</div>
-                    <div class="h-2 bg-slate-200 dark:bg-gray-700 rounded overflow-hidden">
-                      <div id="anBarCulture" class="h-2 bg-indigo-600 dark:bg-indigo-500" style="width:0%"></div>
+              <button id="aaRecalc" class="text-xs px-2 py-1 rounded bg-slate-100 dark:bg-gray-700">Recalcular</button>
+            </div>
+
+            <div class="mt-3 grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-gray-300">
+              <div class="col-span-3 grid place-items-center py-4">
+                <div class="relative">
+                  <div id="aaGauge" class="w-28 h-28 rounded-full" style="background:conic-gradient(#10b981 0%, #e5e7eb 0%)"></div>
+                  <div class="absolute inset-2 rounded-full bg-white dark:bg-gray-800 grid place-items-center">
+                    <div class="text-center">
+                      <div id="aaScoreValue" class="text-2xl font-bold text-slate-900 dark:text-white">—</div>
+                      <div class="text-xs text-slate-500 dark:text-gray-400">Score IA</div>
                     </div>
                   </div>
                 </div>
               </div>
-            </article>
 
-            <!-- Ranking (ocupa 2 columnas) -->
-            <!-- Ranking (ocupa 2 columnas) -->
-<article class="lg:col-span-2 rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-  <header class="flex flex-wrap items-center justify-between gap-2 mb-3">
-    <h3 class="font-semibold text-slate-800 dark:text-white">AI Ranking System</h3>
-    <div class="flex items-center gap-2">
-      <select id="anJobFilter" 
-        class="h-9 px-3 rounded-lg ring-1 ring-slate-200 dark:ring-gray-600 
-               bg-white dark:bg-gray-700 text-sm text-slate-700 dark:text-gray-200">
-        <option value="all">Todas las vacantes</option>
-      </select>
-      <select id="anCandidate" 
-        class="h-9 px-3 rounded-lg ring-1 ring-slate-200 dark:ring-gray-600 
-               bg-white dark:bg-gray-700 text-sm text-slate-700 dark:text-gray-200">
-        <option value="">Seleccionar candidato…</option>
-      </select>
-    </div>
-  </header>
-  <div id="anTable" class="overflow-x-auto"></div>
-</article>
-
-          </div>
-
-          <!-- Fila 2: Detalle IA -->
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="font-semibold text-slate-800 dark:text-white">Análisis Detallado de IA</h3>
-              <button id="anReport"
-                class="px-3 py-1.5 rounded-lg text-sm transition-colors
-                      bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50
-                      dark:bg-gray-700 dark:text-gray-100 dark:ring-gray-600 dark:hover:bg-gray-600">
-                🧾 Generar Reporte
-              </button>
-
+              <div class="col-span-3 space-y-2">
+                ${[
+                  ["Skills Técnicos", "barTech"],
+                  ["Experiencia", "barExp"],
+                  ["Educación", "barEdu"],
+                  ["Fit Cultural", "barFit"],
+                ]
+                  .map(
+                    ([label, id]) => `
+                  <div>
+                    <div class="flex items-center justify-between text-[11px] mb-1"><span>${label}</span><span id="${id}Lbl">0%</span></div>
+                    <div class="h-2 w-full bg-slate-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div id="${id}" class="h-full bg-[#004176] dark:bg-blue-500" style="width:0%"></div>
+                    </div>
+                  </div>`
+                  )
+                  .join("")}
+              </div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-              <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-                <h4 class="font-semibold text-slate-800 dark:text-white">Fortalezas Identificadas</h4>
-                <ul id="anStrengths" class="mt-2 text-sm space-y-2 text-slate-700 dark:text-gray-300"></ul>
-              </article>
-              <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-                <h4 class="font-semibold text-slate-800 dark:text-white">Áreas de Mejora</h4>
-                <ul id="anImprovements" class="mt-2 text-sm space-y-2 text-slate-700 dark:text-gray-300"></ul>
-              </article>
-              <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-                <h4 class="font-semibold text-slate-800 dark:text-white">Predicciones de Éxito</h4>
-                <ul id="anPredictions" class="mt-2 text-sm space-y-2 text-slate-700 dark:text-gray-300"></ul>
-              </article>
-              <article class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-                <h4 class="font-semibold text-slate-800 dark:text-white">Matriz de Compatibilidad</h4>
-                <div id="anMatrix" class="mt-2 text-sm text-slate-700 dark:text-gray-300"></div>
-              </article>
+          </article>
+
+          <!-- Ranking -->
+          <article class="col-span-12 md:col-span-8 rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-semibold text-slate-800 dark:text-white">🏆 AI Ranking System</h3>
+              <div class="flex items-center gap-2">
+                <select id="aaVacancy" class="h-9 rounded-lg ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-sm">
+                  <option value="all">Todas las vacantes</option>
+                  ${(this.state.jobs || [])
+                    .map((j) => `<option value="${j.id}">${j.title}</option>`)
+                    .join("")}
+                </select>
+                <select id="aaCandidate" class="h-9 rounded-lg ring-1 ring-slate-200 dark:ring-gray-600 bg-white dark:bg-gray-700 px-3 text-sm">
+                  <!-- se llena en bind -->
+                </select>
+              </div>
             </div>
+
+            <ul id="aaJustif" class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm"></ul>
+          </article>
+        </div>
+
+        <!-- Banner análisis detallado -->
+        <div class="rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 p-3 text-white flex items-center justify-between">
+          <div class="font-medium">🧠 Análisis Detallado de IA</div>
+          <div class="flex items-center gap-2">
+            <select id="aaCandidateToolbar" class="h-9 rounded-lg bg-white/10 border border-white/20 px-3">
+              <!-- se llena en bind -->
+            </select>
+            <button id="aaReport" class="h-9 px-3 rounded-lg bg-white/10 border border-white/20">🧾 Generar Reporte</button>
           </div>
         </div>
 
-        <!-- Columna derecha: AI Insights -->
-        <aside class="xl:col-span-3 space-y-4">
-          <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-            <h3 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">🤖 AI Insights</h3>
-            <ul class="mt-3 space-y-3 text-sm">
-              <li class="rounded-lg p-3 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-100 dark:ring-blue-800" id="aiCardRec"></li>
-              <li class="rounded-lg p-3 bg-emerald-50 dark:bg-emerald-900/20 ring-1 ring-emerald-100 dark:ring-emerald-800" id="aiCardTrend"></li>
-              <li class="rounded-lg p-3 bg-amber-50 dark:bg-amber-900/20 ring-1 ring-amber-100 dark:ring-amber-800" id="aiCardAlert"></li>
-            </ul>
-          </div>
-          <div class="rounded-xl ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 p-4">
-            <h3 class="font-semibold text-slate-800 dark:text-white">📊 Métricas Rápidas</h3>
-            <ul class="mt-2 text-sm space-y-2" id="aiQuick"></ul>
-          </div>
-        </aside>
+        <!-- 4 tarjetas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <h4 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">✅ Fortalezas Identificadas</h4>
+            <ul id="aaStrengths" class="mt-2 text-sm list-disc pl-5 text-slate-700 dark:text-gray-300"></ul>
+          </article>
+
+          <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <h4 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">⚠️ Áreas de Mejora</h4>
+            <ul id="aaWeaknesses" class="mt-2 text-sm list-disc pl-5 text-slate-700 dark:text-gray-300"></ul>
+          </article>
+
+          <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <h4 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">🔮 Predicciones de Éxito</h4>
+            <ul id="aaPredictions" class="mt-2 text-sm space-y-1 text-slate-700 dark:text-gray-300"></ul>
+          </article>
+
+          <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+            <h4 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">🎯 Matriz de Compatibilidad</h4>
+            <div id="aaMatrix" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
+          </article>
+        </div>
       </div>
+
+      <!-- Col derecha -->
+      <aside class="col-span-12 lg:col-span-4 space-y-4">
+        <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+          <h3 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">🤖 AI Insights</h3>
+          <ul id="aaInsights" class="mt-3 space-y-2 text-sm"></ul>
+        </article>
+
+        <article class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-700 p-4">
+          <h3 class="font-semibold text-slate-800 dark:text-white flex items-center gap-2">📈 Métricas Rápidas</h3>
+          <ul class="mt-3 grid grid-cols-2 gap-3 text-sm">
+            <li class="rounded-lg bg-slate-50 dark:bg-gray-700 p-3">
+              <div class="text-slate-500 dark:text-gray-300">Score promedio</div>
+              <div id="aaMetricsAvg" class="text-2xl font-bold text-slate-900 dark:text-white">—</div>
+            </li>
+            <li class="rounded-lg bg-slate-50 dark:bg-gray-700 p-3">
+              <div class="text-slate-500 dark:text-gray-300">En proceso</div>
+              <div id="aaMetricsInProcess" class="text-2xl font-bold text-slate-900 dark:text-white">—</div>
+            </li>
+            <li class="rounded-lg bg-slate-50 dark:bg-gray-700 p-3">
+              <div class="text-slate-500 dark:text-gray-300">Conversión</div>
+              <div id="aaMetricsConv" class="text-2xl font-bold text-slate-900 dark:text-white">—</div>
+            </li>
+            <li class="rounded-lg bg-slate-50 dark:bg-gray-700 p-3">
+              <div class="text-slate-500 dark:text-gray-300">T. contratación</div>
+              <div id="aaMetricsTTH" class="text-2xl font-bold text-slate-900 dark:text-white">—</div>
+            </li>
+          </ul>
+        </article>
+      </aside>
     </div>
   </section>`;
   }
 
+  bindAnalyticsUI() {
+    // llena selects de candidatos con datos del kanban
+    const items = this.kanban?.items?.slice(0, 200) || [];
+    const options = items
+      .map((c) => `<option value="${c.id}">${c.name} • ${c.jobTitle}</option>`)
+      .join("");
+    const cand = document.getElementById("aaCandidate");
+    const candTb = document.getElementById("aaCandidateToolbar");
+    if (cand)
+      cand.innerHTML =
+        `<option value="auto">Seleccionar candidato...</option>` + options;
+    if (candTb)
+      candTb.innerHTML =
+        `<option value="auto">Seleccionar candidato...</option>` + options;
+
+    const onChange = () => this.renderAnalytics();
+    document
+      .getElementById("aaScoreType")
+      ?.addEventListener("change", onChange);
+    document.getElementById("aaVacancy")?.addEventListener("change", onChange);
+    cand?.addEventListener("change", onChange);
+    candTb?.addEventListener("change", onChange);
+    document
+      .getElementById("aaRefresh")
+      ?.addEventListener("click", () => this.renderAnalytics(true));
+    document
+      .getElementById("aaRecalc")
+      ?.addEventListener("click", () => this.renderAnalytics(true));
+    document.getElementById("aaReport")?.addEventListener("click", () => {
+      alert(
+        "📄 Reporte generado (demo). Incluye score, ranking, fortalezas, áreas de mejora y compatibilidad."
+      );
+    });
+  }
+
+  renderAnalytics(forceRandom = false) {
+    // 1) elegir candidato activo
+    const pickFromSelect = (id) => {
+      const sel = document.getElementById(id);
+      return sel && sel.value !== "auto" ? sel.value : null;
+    };
+    const chosenId =
+      pickFromSelect("aaCandidate") || pickFromSelect("aaCandidateToolbar");
+    const vacancyFilter = document.getElementById("aaVacancy")?.value || "all";
+
+    let pool = this.kanban?.items || [];
+    if (vacancyFilter !== "all")
+      pool = pool.filter((c) => c.jobId === vacancyFilter);
+    if (!pool.length) return;
+
+    const cand = chosenId ? pool.find((c) => c.id === chosenId) : pool[0];
+
+    // 2) datos IA demo (persistimos en la tarjeta para que no cambien siempre)
+    if (!cand.ai || forceRandom) {
+      const r = (min, max) => Math.round(min + Math.random() * (max - min));
+      const skills = [
+        "React",
+        "Node.js",
+        "TypeScript",
+        "AWS",
+        "Docker",
+        "SQL",
+        "Figma",
+        "Kubernetes",
+        "Python",
+        "Java",
+      ];
+      const weak = [
+        "Testing",
+        "Documentación",
+        "CI/CD",
+        "Seguridad",
+        "Comunicación",
+      ];
+      cand.ai = {
+        tech: r(55, 95),
+        exp: r(40, 95),
+        edu: r(50, 90),
+        fit: r(45, 95),
+        strengths: Array.from(
+          { length: 3 },
+          (_, i) => skills[(r(0, skills.length - 1) + i) % skills.length]
+        ),
+        weaknesses: Array.from(
+          { length: 3 },
+          (_, i) => weak[(r(0, weak.length - 1) + i) % weak.length]
+        ),
+        predictions: [
+          `Prob. pasar a entrevista: ${r(65, 95)}%`,
+          `Prob. oferta si entrevista: ${r(50, 85)}%`,
+          `Riesgo de abandono: ${r(5, 25)}%`,
+        ],
+        compat: [
+          ["Stack actual", `${r(70, 95)}%`],
+          ["Metodología", `${r(55, 90)}%`],
+          ["Huso horario", `${r(60, 95)}%`],
+          ["Idioma", `${r(60, 95)}%`],
+        ],
+      };
+    }
+
+    const w = { tech: 0.3, exp: 0.25, edu: 0.15, fit: 0.3 };
+    const scoreType =
+      document.getElementById("aaScoreType")?.value || "general";
+    const pct = cand.ai;
+    const general = Math.round(
+      pct.tech * w.tech + pct.exp * w.exp + pct.edu * w.edu + pct.fit * w.fit
+    );
+
+    const selectedScore = scoreType === "general" ? general : pct[scoreType];
+
+    // 3) Pinta gauge + barras
+    const gauge = document.getElementById("aaGauge");
+    const scoreLbl = document.getElementById("aaScoreValue");
+    if (gauge)
+      gauge.style.background = `conic-gradient(#10b981 ${selectedScore}%, #e5e7eb 0)`;
+    if (scoreLbl) scoreLbl.textContent = selectedScore;
+
+    const setBar = (id, val) => {
+      const el = document.getElementById(id);
+      const lb = document.getElementById(id + "Lbl");
+      if (el) el.style.width = `${val}%`;
+      if (lb) lb.textContent = `${val}%`;
+    };
+    setBar("barTech", pct.tech);
+    setBar("barExp", pct.exp);
+    setBar("barEdu", pct.edu);
+    setBar("barFit", pct.fit);
+
+    // 4) Justificación del score
+    const just = document.getElementById("aaJustif");
+    if (just) {
+      const parts = [
+        [
+          "⚙️ Técnicos",
+          pct.tech,
+          Math.round(((pct.tech * w.tech) / 100) * 100) / 1,
+        ],
+        [
+          "🧭 Experiencia",
+          pct.exp,
+          Math.round(((pct.exp * w.exp) / 100) * 100) / 1,
+        ],
+        [
+          "🎓 Educación",
+          pct.edu,
+          Math.round(((pct.edu * w.edu) / 100) * 100) / 1,
+        ],
+        [
+          "🤝 Fit Cultural",
+          pct.fit,
+          Math.round(((pct.fit * w.fit) / 100) * 100) / 1,
+        ],
+      ];
+      just.innerHTML = parts
+        .map(
+          ([t, v, contrib]) => `
+      <li class="rounded-lg ring-1 ring-slate-200 dark:ring-gray-700 p-3">
+        <div class="text-xs text-slate-500 dark:text-gray-400">${t}</div>
+        <div class="text-lg font-semibold">${v}%</div>
+        <div class="text-[11px] text-slate-500 dark:text-gray-400">Contribución: ${contrib}</div>
+      </li>`
+        )
+        .join("");
+    }
+
+    // 5) Insights demo
+    const insights = document.getElementById("aaInsights");
+    if (insights) {
+      const ideas = [
+        {
+          t: "Recomendación",
+          c: `${cand.name} destaca en ${cand.ai.strengths[0]}. Asignar prueba técnica avanzada.`,
+        },
+        {
+          t: "Tendencia",
+          c: `Los candidatos de ${cand.jobDept} subieron 12% en score esta semana.`,
+        },
+        {
+          t: "Alerta",
+          c: `${cand.name} lleva 9 días sin contacto. Considera un follow-up.`,
+        },
+      ];
+      insights.innerHTML = ideas
+        .map(
+          (x) => `
+      <li class="rounded-lg bg-slate-50 dark:bg-gray-700 p-3 ring-1 ring-slate-200 dark:ring-gray-600">
+        <p class="font-medium text-slate-800 dark:text-white">${x.t}</p>
+        <p class="text-slate-700 dark:text-gray-300 text-sm">${x.c}</p>
+      </li>`
+        )
+        .join("");
+    }
+
+    // 6) Métricas rápidas demo
+    const inProcess = pool.length;
+    const avgScore = Math.round(
+      pool.reduce((s, c2) => {
+        if (!c2.ai) c2.ai = { tech: 60, exp: 60, edu: 60, fit: 60 };
+        return (
+          s +
+          Math.round(
+            c2.ai.tech * w.tech +
+              c2.ai.exp * w.exp +
+              c2.ai.edu * w.edu +
+              c2.ai.fit * w.fit
+          )
+        );
+      }, 0) / pool.length
+    );
+    const conv = Math.round(55 + Math.random() * 20);
+    const tth = Math.round(20 + Math.random() * 10);
+
+    const setTxt = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+    setTxt("aaMetricsAvg", avgScore);
+    setTxt("aaMetricsInProcess", inProcess);
+    setTxt("aaMetricsConv", `${conv}%`);
+    setTxt("aaMetricsTTH", `${tth}d`);
+
+    // 7) Detalle: Fortalezas, Debilidades, Predicciones, Matriz
+    const li = (a) => a.map((x) => `<li>• ${x}</li>`).join("");
+    const grid = (pairs) =>
+      pairs
+        .map(
+          ([k, v]) => `
+    <div class="rounded-lg bg-slate-50 dark:bg-gray-700 p-2">
+      <div class="text-xs text-slate-500 dark:text-gray-400">${k}</div>
+      <div class="font-medium">${v}</div>
+    </div>`
+        )
+        .join("");
+
+    setTxt("aaStrengths", "");
+    setTxt("aaWeaknesses", "");
+    setTxt("aaPredictions", "");
+    const sEl = document.getElementById("aaStrengths");
+    if (sEl) sEl.innerHTML = li(cand.ai.strengths);
+    const wEl = document.getElementById("aaWeaknesses");
+    if (wEl) wEl.innerHTML = li(cand.ai.weaknesses);
+    const pEl = document.getElementById("aaPredictions");
+    if (pEl) pEl.innerHTML = li(cand.ai.predictions);
+    const mEl = document.getElementById("aaMatrix");
+    if (mEl) mEl.innerHTML = grid(cand.ai.compat);
+  }
+
   bindAnalytics() {
-    // Llenar selects
-    const jobSel = document.getElementById("anJobFilter");
-    const candSel = document.getElementById("anCandidate");
-
-    (this.state.jobs || []).forEach((j) => {
-      const opt = document.createElement("option");
-      opt.value = j.id;
-      opt.textContent = j.title;
-      jobSel.appendChild(opt);
-    });
-
-    (this.kanban.items || []).forEach((c) => {
-      const opt = document.createElement("option");
-      opt.value = c.id;
-      opt.textContent = `${c.name} — ${c.jobTitle}`;
-      candSel.appendChild(opt);
-    });
-
-    jobSel.addEventListener("change", () => this.renderAnalytics());
-    candSel.addEventListener("change", () => this.renderAnalytics());
-    document
-      .getElementById("anMetric")
-      ?.addEventListener("change", () => this.renderAnalytics());
-    document
-      .getElementById("anRefresh")
-      ?.addEventListener("click", () => this.renderAnalytics(true));
-    document
-      .getElementById("anRecalc")
-      ?.addEventListener("click", () => this.renderAnalytics(true));
-    document
-      .getElementById("anReport")
-      ?.addEventListener("click", () => alert("Generar reporte (demo)"));
+    // Usar el método bindAnalyticsUI que ya está implementado correctamente
+    this.bindAnalyticsUI();
   }
 
   renderAnalytics(forceRandom = false) {
@@ -1024,7 +1193,7 @@ export class CandidatosView {
     const tbl = rows.length
       ? `
     <table class="min-w-full text-sm">
-      <thead class="text-xs uppercase text-slate-500 dark:text-gray-400">
+      <thead class="text-xs uppercase text-slate-500">
         <tr>
           <th class="text-left py-2 px-3">Candidato</th>
           <th class="text-left py-2 px-3">Vacante</th>
@@ -1035,24 +1204,24 @@ export class CandidatosView {
           <th class="text-right py-2 px-3">Fit</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+      <tbody class="divide-y">
         ${rows
           .map(
             (r) => `
           <tr>
-            <td class="py-2 px-3 text-slate-900 dark:text-white">${r.c.name}</td>
-            <td class="py-2 px-3 text-slate-500 dark:text-gray-400">${r.c.jobTitle}</td>
-            <td class="py-2 px-3 text-right font-semibold text-slate-900 dark:text-white">${r.overall}%</td>
-            <td class="py-2 px-3 text-right text-slate-700 dark:text-gray-300">${r.skills}%</td>
-            <td class="py-2 px-3 text-right text-slate-700 dark:text-gray-300">${r.exp}%</td>
-            <td class="py-2 px-3 text-right text-slate-700 dark:text-gray-300">${r.edu}%</td>
-            <td class="py-2 px-3 text-right text-slate-700 dark:text-gray-300">${r.culture}%</td>
+            <td class="py-2 px-3">${r.c.name}</td>
+            <td class="py-2 px-3 text-slate-500">${r.c.jobTitle}</td>
+            <td class="py-2 px-3 text-right font-semibold">${r.overall}%</td>
+            <td class="py-2 px-3 text-right">${r.skills}%</td>
+            <td class="py-2 px-3 text-right">${r.exp}%</td>
+            <td class="py-2 px-3 text-right">${r.edu}%</td>
+            <td class="py-2 px-3 text-right">${r.culture}%</td>
           </tr>`
           )
           .join("")}
       </tbody>
     </table>`
-      : `<div class="text-sm text-slate-500 dark:text-gray-400">No hay candidatos para mostrar.</div>`;
+      : `<div class="text-sm text-slate-500">No hay candidatos para mostrar.</div>`;
     document.getElementById("anTable").innerHTML = tbl;
 
     // Selección para detalle (candidato select o top de la tabla)
@@ -1723,195 +1892,178 @@ export class CandidatosView {
   }
 
   maximizeInsights() {
-    // Alternar estado de maximización
-    this.state.isMaximized = !this.state.isMaximized;
+    // Crear modal para mostrar insights maximizados
+    const modal = document.createElement("div");
+    modal.id = "insightsModal";
+    modal.className =
+      "fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4";
 
-    // Actualizar el icono del botón
-    const btn = document.getElementById("maximizeInsights");
-    if (btn) {
-      const icon = btn.querySelector("svg");
-      if (this.state.isMaximized) {
-        // Icono de minimizar
-        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9v4.5M15 9h4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15v4.5M15 15h4.5m0 0l-5.5 5.5"></path>`;
-        btn.title = "Minimizar vista";
-      } else {
-        // Icono de maximizar
-        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>`;
-        btn.title = "Maximizar vista";
+    modal.innerHTML = `
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <!-- Header de la modal -->
+        <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-gray-700">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <span class="text-white text-lg">🤖</span>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-slate-900 dark:text-white">AI Insights - Análisis Completo</h2>
+              <p class="text-sm text-slate-600 dark:text-gray-400">Análisis inteligente detallado de candidatos</p>
+            </div>
+          </div>
+          <button id="closeInsightsModal" class="p-2 rounded-lg bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Contenido de la modal -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Insights principales -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-4">Insights Principales</h3>
+              <ul id="modalInsightsList" class="space-y-3">
+                <!-- Insights dinámicos -->
+              </ul>
+            </div>
+            
+            <!-- Métricas adicionales -->
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-4">Métricas Detalladas</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div class="text-2xl font-bold text-slate-900 dark:text-white">${
+                    this.state.candidates.filter((c) => c.aiScore >= 90).length
+                  }</div>
+                  <div class="text-sm text-slate-600 dark:text-gray-400">Score IA ≥90%</div>
+                </div>
+                <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div class="text-2xl font-bold text-slate-900 dark:text-white">${Math.round(
+                    this.state.candidates.reduce(
+                      (acc, c) => acc + c.aiScore,
+                      0
+                    ) / this.state.candidates.length
+                  )}%</div>
+                  <div class="text-sm text-slate-600 dark:text-gray-400">Score promedio</div>
+                </div>
+                <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div class="text-2xl font-bold text-slate-900 dark:text-white">${
+                    this.state.candidates.filter((c) => c.priority === "ALTA")
+                      .length
+                  }</div>
+                  <div class="text-sm text-slate-600 dark:text-gray-400">Prioridad alta</div>
+                </div>
+                <div class="bg-slate-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div class="text-2xl font-bold text-slate-900 dark:text-white">${Math.round(
+                    (this.state.candidates.filter(
+                      (c) => c.stage === "CONTRATADO"
+                    ).length /
+                      this.state.candidates.length) *
+                      100
+                  )}%</div>
+                  <div class="text-sm text-slate-600 dark:text-gray-400">Tasa conversión</div>
+                </div>
+              </div>
+              
+              <!-- Top skills -->
+              <div class="mt-6">
+                <h4 class="font-medium text-slate-900 dark:text-white mb-3">Skills más demandadas</h4>
+                <div class="flex flex-wrap gap-2">
+                  ${this.getTopSkills()
+                    .map(
+                      (skill) =>
+                        `<span class="skill-tag">${skill.name} (${skill.count})</span>`
+                    )
+                    .join("")}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Llenar insights en la modal
+    document.getElementById("modalInsightsList").innerHTML = [
+      this.insight(
+        "MATCHING · ALTA",
+        "5 candidatos tienen score IA ≥90%",
+        "hace 5 minutos",
+        "alta",
+        true
+      ),
+      this.insight(
+        "PIPELINE · MEDIA",
+        "3 candidatos llevan >7 días en screening",
+        "hace 15 minutos",
+        "media"
+      ),
+      this.insight(
+        "OPTIMIZACIÓN · ALTA",
+        "Candidatos con React tienen 25% más probabilidad de éxito",
+        "hace 30 minutos",
+        "alta",
+        true
+      ),
+      this.insight(
+        "ALERTA · URGENTE",
+        "2 ofertas pendientes de respuesta por >48h",
+        "hace 1 hora",
+        "urgente",
+        true
+      ),
+      this.insight(
+        "TENDENCIA · BAJA",
+        "Score IA promedio subió 8% esta semana",
+        "hace 2 horas",
+        "baja"
+      ),
+      this.insight(
+        "PERFORMANCE · MEDIA",
+        "Tiempo promedio en pipeline: 12 días",
+        "hace 3 horas",
+        "media"
+      ),
+      this.insight(
+        "DIVERSIDAD · BAJA",
+        "40% de candidatos son de Madrid",
+        "hace 4 horas",
+        "baja"
+      ),
+      this.insight(
+        "CALIDAD · ALTA",
+        "85% de candidatos superan screening inicial",
+        "hace 5 horas",
+        "alta"
+      ),
+    ].join("");
+
+    // Cerrar modal
+    document
+      .getElementById("closeInsightsModal")
+      .addEventListener("click", () => {
+        document.body.removeChild(modal);
+      });
+
+    // Cerrar con ESC o click fuera
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        document.body.removeChild(modal);
       }
-    }
+    });
 
-    // Aplicar estilos de maximización
-    this.applyMaximizedStyles();
-  }
-
-  applyMaximizedStyles() {
-    const mainContent = document.getElementById("main-content");
-    if (!mainContent) return;
-
-    if (this.state.isMaximized) {
-      // Maximizar: ocultar sidebar de insights, métricas y expandir contenido principal
-      const insightsAside = mainContent.querySelector("aside");
-      const mainSection = mainContent.querySelector("section.grid");
-      const metricsSection = document.getElementById("metricsSection");
-
-      if (insightsAside) {
-        insightsAside.style.display = "none";
-      }
-
-      if (metricsSection) {
-        metricsSection.style.display = "none";
-      }
-
-      if (mainSection) {
-        // Cambiar de grid con columnas a una sola columna que ocupe todo el ancho
-        mainSection.className = mainSection.className.replace(
-          "lg:grid-cols-12",
-          "lg:grid-cols-1"
-        );
-
-        // Agregar clase para pantalla completa
-        mainContent.classList.add("maximized-view");
-
-        // Aumentar elementos por página para aprovechar el espacio
-        const perPageSelect = document.getElementById("fPerPage");
-        if (perPageSelect && this.state.itemsPerPage < 20) {
-          this.state.itemsPerPage = 20;
-          perPageSelect.value = "20";
-          // Refrescar la vista para mostrar más elementos
-          this.refreshView();
+    document.addEventListener("keydown", function escHandler(e) {
+      if (e.key === "Escape") {
+        if (document.getElementById("insightsModal")) {
+          document.body.removeChild(modal);
         }
-
-        // Aplicar estilos adicionales para maximización
-        const style = document.createElement("style");
-        style.id = "maximized-styles";
-        style.textContent = `
-          .maximized-view {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            z-index: 40 !important;
-            background: white !important;
-            padding: 1rem !important;
-            overflow-y: auto !important;
-          }
-          
-          .dark .maximized-view {
-            background: rgb(17 24 39) !important;
-          }
-          
-          .maximized-view .grid {
-            max-width: none !important;
-          }
-          
-          .maximized-view #viewContainer {
-            min-height: calc(100vh - 200px) !important;
-          }
-          
-          /* Remover limitaciones de ancho en vista maximizada */
-          .maximized-view .mx-auto {
-            max-width: none !important;
-          }
-          
-          .maximized-view .max-w-screen-2xl,
-          .maximized-view .max-w-\\[1600px\\] {
-            max-width: none !important;
-          }
-          
-          /* Aprovechar mejor el espacio horizontal */
-          .maximized-view #metricsSection {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-          }
-          
-          /* Mejorar distribución de filtros en vista maximizada */
-          .maximized-view .grid.grid-cols-1.lg\\:grid-cols-12 {
-            grid-template-columns: 1fr !important;
-          }
-          
-          .maximized-view .xl\\:col-span-10 {
-            grid-column: span 1 !important;
-          }
-          
-          /* Más espacio para los controles de filtros */
-          .maximized-view .flex.flex-wrap.items-center.gap-2 {
-            gap: 1rem !important;
-          }
-          
-          /* Mejorar tabla en vista maximizada */
-          .maximized-view table {
-            min-width: 100% !important;
-          }
-          
-          .maximized-view th,
-          .maximized-view td {
-            padding: 0.75rem 1rem !important;
-          }
-          
-          /* Más espacio para skills en la tabla */
-          .maximized-view .skill-tag {
-            margin: 0.125rem !important;
-            padding: 0.25rem 0.5rem !important;
-          }
-          
-          /* Ocultar elementos de navegación cuando está maximizado */
-          .maximized-view ~ nav,
-          .maximized-view ~ header,
-          .maximized-view ~ .sidebar {
-            display: none !important;
-          }
-        `;
-
-        // Remover estilo anterior si existe
-        const existingStyle = document.getElementById("maximized-styles");
-        if (existingStyle) {
-          existingStyle.remove();
-        }
-
-        document.head.appendChild(style);
+        document.removeEventListener("keydown", escHandler);
       }
-    } else {
-      // Minimizar: restaurar layout original
-      const insightsAside = mainContent.querySelector("aside");
-      const mainSection = mainContent.querySelector("section.grid");
-
-      if (insightsAside) {
-        insightsAside.style.display = "block";
-      }
-
-      // Restaurar métricas
-      const metricsSection = document.getElementById("metricsSection");
-      if (metricsSection) {
-        metricsSection.style.display = "grid";
-      }
-
-      if (mainSection) {
-        // Restaurar grid original
-        mainSection.className = mainSection.className.replace(
-          "lg:grid-cols-1",
-          "lg:grid-cols-12"
-        );
-
-        // Remover clase de maximización
-        mainContent.classList.remove("maximized-view");
-
-        // Restaurar elementos por página originales
-        const perPageSelect = document.getElementById("fPerPage");
-        if (perPageSelect && this.state.itemsPerPage > 10) {
-          this.state.itemsPerPage = 10;
-          perPageSelect.value = "10";
-          // Refrescar la vista para mostrar menos elementos
-          this.refreshView();
-        }
-
-        // Remover estilos de maximización
-        const maximizedStyles = document.getElementById("maximized-styles");
-        if (maximizedStyles) {
-          maximizedStyles.remove();
-        }
-      }
-    }
+    });
   }
 
   getTopSkills() {
