@@ -9,6 +9,7 @@ export class VacantesView {
       recruiter: "all",
       sort: "recent",
       insightsTick: 0,
+      isMaximized: false, // Estado de maximización
       // Paginación
       currentPage: 1,
       itemsPerPage: 10,
@@ -385,6 +386,7 @@ export class VacantesView {
     this.candidates = [];
 
     this.injectKanbanStyles();
+    this.injectMaximizeStyles();
     this.render();
     this.bindStatic();
     this.updateMetrics();
@@ -457,7 +459,9 @@ export class VacantesView {
         (n, i) => `
     <li class="flex items-center justify-between py-2">
       <span class="text-slate-600 dark:text-gray-300">${stages[i]}</span>
-      <span class="font-semibold text-slate-900 dark:text-white">${this.n(n)}</span>
+      <span class="font-semibold text-slate-900 dark:text-white">${this.n(
+        n
+      )}</span>
     </li>`
       )
       .join("");
@@ -683,6 +687,29 @@ export class VacantesView {
     }
   }
 
+  injectMaximizeStyles() {
+    if (!document.getElementById("maximize-styles")) {
+      const style = document.createElement("style");
+      style.id = "maximize-styles";
+      style.textContent = `
+        /* Animación del botón de maximizar */
+        #maximizeInsights {
+          transition: all 0.2s ease;
+        }
+        
+        #maximizeInsights:hover {
+          transform: scale(1.1);
+        }
+        
+        /* Estilos para vista maximizada */
+        .maximized-view {
+          transition: all 0.3s ease-in-out;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   render() {
     const el = document.getElementById("main-content");
     if (!el) return;
@@ -822,22 +849,35 @@ export class VacantesView {
           <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Izquierda -->
              <div class="xl:col-span-10 space-y-4">
-              <div class="flex flex-wrap items-center gap-2">
-                <button data-view="list" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
-                  this.state.view === "list"
-                    ? "bg-slate-900 text-white"
-                    : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
-                }">📋 Lista</button>
-                <button data-view="kanban" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
-                  this.state.view === "kanban"
-                    ? "bg-slate-900 text-white"
-                    : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
-                }">📊 Kanban</button>
-                <button data-view="analytics" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
-                  this.state.view === "analytics"
-                    ? "bg-slate-900 text-white"
-                    : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
-                }">📈 Analytics</button>
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <!-- Tabs de navegación -->
+                <div class="flex flex-wrap items-center gap-2">
+                  <button data-view="list" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
+                    this.state.view === "list"
+                      ? "bg-slate-900 text-white"
+                      : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
+                  }">📋 Lista</button>
+                  <button data-view="kanban" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
+                    this.state.view === "kanban"
+                      ? "bg-slate-900 text-white"
+                      : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
+                  }">📊 Kanban</button>
+                  <button data-view="analytics" class="tab-btn rounded-lg px-3 py-2 text-sm flex-1 sm:flex-none transition-colors ${
+                    this.state.view === "analytics"
+                      ? "bg-slate-900 text-white"
+                      : "ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700"
+                  }">📈 Analytics</button>
+                </div>
+                
+                <!-- Botón de maximizar -->
+                <div class="flex items-center gap-2 border-l border-slate-200 dark:border-gray-600 pl-3 ml-2">
+                  <span class="text-xs text-slate-500 dark:text-gray-400 font-medium">Vista:</span>
+                  <button id="maximizeInsights" class="p-2 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-blue-600 dark:text-blue-400 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-800/30 dark:hover:to-indigo-800/30 transition-all duration-200 ring-1 ring-blue-200 dark:ring-blue-700/50 hover:ring-blue-300 dark:hover:ring-blue-600 hover:scale-105" title="Maximizar vista">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div id="viewContainer"></div>
             </div>
@@ -1113,6 +1153,13 @@ export class VacantesView {
       this.state.insightsTick++;
       this.renderInsights();
     });
+
+    // Botón de maximizar
+    document
+      .getElementById("maximizeInsights")
+      ?.addEventListener("click", () => {
+        this.maximizeInsights();
+      });
 
     // Modal de candidatos
     document
@@ -1921,7 +1968,9 @@ export class VacantesView {
         }</span></td>
         <td class="px-4 py-4">${pill}</td>
         <td class="px-4 py-4">
-          <div class="font-semibold text-slate-800 dark:text-white">${this.n(j.apps)}</div>
+          <div class="font-semibold text-slate-800 dark:text-white">${this.n(
+            j.apps
+          )}</div>
           ${appsDelta}
         </td>
         <td class="px-4 py-4">
@@ -2490,5 +2539,191 @@ export class VacantesView {
   }
   n(n) {
     return new Intl.NumberFormat("es-ES").format(n);
+  }
+
+  // ---------- Maximización ----------
+  maximizeInsights() {
+    this.state.isMaximized = !this.state.isMaximized;
+
+    if (this.state.isMaximized) {
+      this.applyMaximizedView();
+    } else {
+      this.removeMaximizedView();
+    }
+
+    // Actualizar el ícono del botón
+    this.updateMaximizeButton();
+  }
+
+  applyMaximizedView() {
+    const mainContent = document.getElementById("main-content");
+    if (mainContent) {
+      mainContent.classList.add("maximized-view");
+    }
+
+    // Ocultar sidebar
+    const sidebar = document.querySelector("aside");
+    if (sidebar) {
+      sidebar.style.display = "none";
+    }
+    const metricsSection = document.querySelector(
+      "section.grid.grid-cols-2.md\\:grid-cols-4.gap-4.mb-6"
+    );
+    if (metricsSection) {
+      metricsSection.style.display = "none";
+    }
+
+    // Cambiar grid layout para usar todo el ancho
+    const gridSection = document.querySelector(
+      ".grid.grid-cols-1.lg\\:grid-cols-12"
+    );
+    if (gridSection) {
+      gridSection.classList.remove("lg:grid-cols-12");
+      gridSection.classList.add("grid-cols-1");
+    }
+
+    // Cambiar el span de la columna principal
+    const mainColumn = document.querySelector(".xl\\:col-span-10");
+    if (mainColumn) {
+      mainColumn.classList.remove("xl:col-span-10");
+      mainColumn.classList.add("col-span-1");
+    }
+
+    // Aumentar elementos por página para aprovechar el espacio
+    const perPageSelect = document.getElementById("fPerPage");
+    if (perPageSelect && this.state.itemsPerPage < 20) {
+      this.state.itemsPerPage = 20;
+      perPageSelect.value = "20";
+      // Refrescar la vista para mostrar más elementos
+      this.refreshView();
+    }
+
+    // Aplicar estilos adicionales para maximización
+    const style = document.createElement("style");
+    style.id = "maximized-styles";
+    style.textContent = `
+      .maximized-view {
+        transition: all 0.3s ease-in-out;
+      }
+      
+      .maximized-view .max-w-screen-2xl,
+      .maximized-view .max-w-\\[1600px\\] {
+        max-width: none !important;
+      }
+      
+      .maximized-view #jobsList {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+        gap: 1rem !important;
+      }
+      
+      .maximized-view .job-card {
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+      }
+      
+      .maximized-view .job-card:hover {
+        transform: scale(1.03);
+      }
+      
+      /* Más columnas en pantallas grandes cuando está maximizado */
+      @media (min-width: 1280px) {
+        .maximized-view #jobsList {
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+        }
+      }
+      
+      @media (min-width: 1536px) {
+        .maximized-view #jobsList {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+        }
+      }
+      
+      @media (min-width: 1920px) {
+        .maximized-view #jobsList {
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+        }
+      }
+      
+      /* Tabla maximizada */
+      .maximized-view table {
+        width: 100% !important;
+      }
+      
+      .maximized-view td, .maximized-view th {
+        padding: 0.75rem 1rem !important;
+      }
+      
+      /* Kanban maximizado */
+      .maximized-view .kanban-column {
+        min-width: 280px !important;
+      }
+      
+      .maximized-view .kanban-container {
+        gap: 1.5rem !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  removeMaximizedView() {
+    const mainContent = document.getElementById("main-content");
+    if (mainContent) {
+      mainContent.classList.remove("maximized-view");
+    }
+
+    // Mostrar sidebar
+    const sidebar = document.querySelector("aside");
+    if (sidebar) {
+      sidebar.style.display = "";
+    }
+
+    // Restaurar grid layout
+    const gridSection = document.querySelector(".grid.grid-cols-1");
+    if (gridSection && !gridSection.classList.contains("lg:grid-cols-12")) {
+      gridSection.classList.add("lg:grid-cols-12");
+    }
+
+    // Restaurar el span de la columna principal
+    const mainColumn = document.querySelector(".col-span-1");
+    if (mainColumn && !mainColumn.classList.contains("xl:col-span-10")) {
+      mainColumn.classList.add("xl:col-span-10");
+    }
+
+    // Restaurar elementos por página originales
+    const perPageSelect = document.getElementById("fPerPage");
+    if (perPageSelect && this.state.itemsPerPage > 10) {
+      this.state.itemsPerPage = 10;
+      perPageSelect.value = "10";
+      // Refrescar la vista para mostrar menos elementos
+      this.refreshView();
+    }
+
+    // Remover estilos de maximización
+    const maximizedStyles = document.getElementById("maximized-styles");
+    if (maximizedStyles) {
+      maximizedStyles.remove();
+    }
+  }
+
+  updateMaximizeButton() {
+    const btn = document.getElementById("maximizeInsights");
+    if (!btn) return;
+
+    const svg = btn.querySelector("svg path");
+    if (this.state.isMaximized) {
+      // Ícono de minimizar
+      svg.setAttribute(
+        "d",
+        "M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m18 0h-3a2 2 0 0 0-2 2v3"
+      );
+      btn.title = "Minimizar vista";
+    } else {
+      // Ícono de maximizar
+      svg.setAttribute(
+        "d",
+        "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+      );
+      btn.title = "Maximizar vista";
+    }
   }
 }
