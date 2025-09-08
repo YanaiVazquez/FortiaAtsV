@@ -2561,11 +2561,19 @@ export class VacantesView {
       mainContent.classList.add("maximized-view");
     }
 
-    // Ocultar sidebar
-    const sidebar = document.querySelector("aside");
-    if (sidebar) {
-      sidebar.style.display = "none";
+    // Ocultar AI Insights sidebar
+    const aiInsightsSidebar = document.querySelector("aside.lg\\:col-span-2");
+    if (aiInsightsSidebar) {
+      aiInsightsSidebar.style.display = "none";
     }
+    
+    // Ocultar header con botones
+    const header = document.querySelector("header");
+    if (header) {
+      header.style.display = "none";
+    }
+    
+    // Ocultar métricas
     const metricsSection = document.querySelector(
       "section.grid.grid-cols-2.md\\:grid-cols-4.gap-4.mb-6"
     );
@@ -2597,6 +2605,14 @@ export class VacantesView {
       // Refrescar la vista para mostrar más elementos
       this.refreshView();
     }
+
+    // Agregar listener para tecla ESC
+    this.escKeyListener = (e) => {
+      if (e.key === 'Escape' && this.state.isMaximized) {
+        this.maximizeInsights();
+      }
+    };
+    document.addEventListener('keydown', this.escKeyListener);
 
     // Aplicar estilos adicionales para maximización
     const style = document.createElement("style");
@@ -2671,10 +2687,24 @@ export class VacantesView {
       mainContent.classList.remove("maximized-view");
     }
 
-    // Mostrar sidebar
-    const sidebar = document.querySelector("aside");
-    if (sidebar) {
-      sidebar.style.display = "";
+    // Mostrar AI Insights sidebar
+    const aiInsightsSidebar = document.querySelector("aside.lg\\:col-span-2");
+    if (aiInsightsSidebar) {
+      aiInsightsSidebar.style.display = "";
+    }
+    
+    // Mostrar header con botones
+    const header = document.querySelector("header");
+    if (header) {
+      header.style.display = "";
+    }
+    
+    // Mostrar métricas
+    const metricsSection = document.querySelector(
+      "section.grid.grid-cols-2.md\\:grid-cols-4.gap-4.mb-6"
+    );
+    if (metricsSection) {
+      metricsSection.style.display = "";
     }
 
     // Restaurar grid layout
@@ -2698,6 +2728,12 @@ export class VacantesView {
       this.refreshView();
     }
 
+    // Remover listener de tecla ESC
+    if (this.escKeyListener) {
+      document.removeEventListener('keydown', this.escKeyListener);
+      this.escKeyListener = null;
+    }
+
     // Remover estilos de maximización
     const maximizedStyles = document.getElementById("maximized-styles");
     if (maximizedStyles) {
@@ -2716,7 +2752,7 @@ export class VacantesView {
         "d",
         "M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m18 0h-3a2 2 0 0 0-2 2v3"
       );
-      btn.title = "Minimizar vista";
+      btn.title = "Minimizar vista (ESC)";
     } else {
       // Ícono de maximizar
       svg.setAttribute(
@@ -2724,6 +2760,14 @@ export class VacantesView {
         "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
       );
       btn.title = "Maximizar vista";
+    }
+  }
+
+  // Método para limpiar listeners cuando se destruya la vista
+  destroy() {
+    if (this.escKeyListener) {
+      document.removeEventListener('keydown', this.escKeyListener);
+      this.escKeyListener = null;
     }
   }
 }

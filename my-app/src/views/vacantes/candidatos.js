@@ -552,6 +552,44 @@ export class CandidatosView {
       </div>
     `;
   }
+  _normalizeCandidate(c) {
+    // Deriva aiScoring a partir de aiScore (placeholder realista)
+    const overall = c.aiScore ?? 70;
+    const skillsMatch = Math.min(10, Math.round((overall / 100) * 9) + 1);
+    const cultureMatch = Math.min(10, Math.round((overall / 100) * 8) + 2);
+    const successProb = Math.max(40, Math.min(95, Math.round(overall * 0.95)));
+
+    // Time-in-stage aproximado con 'appliedAt'
+    const dias = Math.max(
+      1,
+      Math.floor((Date.now() - (c.appliedAt || Date.now())) / 86400000)
+    );
+    const timeInStage = `${dias} día${dias > 1 ? "s" : ""}`;
+
+    return {
+      id: c.id,
+      name: c.name,
+      avatar: c.avatar,
+      currentPosition: c.currentPosition,
+      company: c.company,
+      location: c.location || "—",
+      experience: c.experience || "—",
+      jobTitle: c.jobApplied || "—",
+      jobId: c.jobId || null, // si no tienes, déjalo en null
+      stage:
+        { SCREENING: "IA_SCREENING", ENTREVISTA: "ENTREVISTA_TEC" }[c.stage] ||
+        c.stage,
+      priority: c.priority,
+      ai: { overall, skillsMatch, cultureMatch, successProb },
+      timeInStage,
+    };
+  }
+  getCandidatesByStage(stageKey) {
+    const normalized = this.getFilteredCandidates().map((c) =>
+      this._normalizeCandidate(c)
+    );
+    return normalized.filter((c) => c.stage === stageKey);
+  }
 
   bindStatic() {
     // Búsqueda
@@ -1565,13 +1603,24 @@ export class CandidatosView {
     // Event listeners específicos de la vista pipeline
   }
 
+  legacyMap = {
+    SCREENING: "IA_SCREENING",
+    ENTREVISTA: "ENTREVISTA_TEC",
+  };
+
   getPipelineStages() {
     return [
-      { key: "APLICADO", name: "Aplicado", color: "blue" },
-      { key: "SCREENING", name: "Screening", color: "amber" },
-      { key: "ENTREVISTA", name: "Entrevista", color: "purple" },
-      { key: "OFERTA", name: "Oferta", color: "emerald" },
-      { key: "CONTRATADO", name: "Contratado", color: "green" },
+      { key: "APLICADO", name: "📝 Aplicado", color: "blue" },
+      { key: "IA_SCREENING", name: "🤖 IA Screening", color: "indigo" },
+      { key: "REVISION_RH", name: "👁️ Revisión RH", color: "amber" },
+      { key: "ENTREVISTA_TEC", name: "🛠️ Entrevista Técnica", color: "purple" },
+      {
+        key: "ENTREVISTA_FINAL",
+        name: "🎯 Entrevista Final",
+        color: "fuchsia",
+      },
+      { key: "OFERTA", name: "✅ Oferta", color: "emerald" },
+      { key: "CONTRATADO", name: "🟢 Contratado", color: "green" },
     ];
   }
 
