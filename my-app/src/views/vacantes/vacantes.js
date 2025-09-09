@@ -2561,8 +2561,8 @@ export class VacantesView {
       mainContent.classList.add("maximized-view");
     }
 
-    // Ocultar AI Insights sidebar
-    const aiInsightsSidebar = document.querySelector("aside.lg\\:col-span-2");
+    // Ocultar AI Insights sidebar completamente
+    const aiInsightsSidebar = document.querySelector("aside");
     if (aiInsightsSidebar) {
       aiInsightsSidebar.style.display = "none";
     }
@@ -2620,6 +2620,18 @@ export class VacantesView {
     style.textContent = `
       .maximized-view {
         transition: all 0.3s ease-in-out;
+      }
+      
+      .maximized-view aside {
+        display: none !important;
+      }
+      
+      .maximized-view .grid.lg\\:grid-cols-12 {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .maximized-view .xl\\:col-span-10 {
+        grid-column: span 1 / span 1 !important;
       }
       
       .maximized-view .max-w-screen-2xl,
@@ -2688,7 +2700,7 @@ export class VacantesView {
     }
 
     // Mostrar AI Insights sidebar
-    const aiInsightsSidebar = document.querySelector("aside.lg\\:col-span-2");
+    const aiInsightsSidebar = document.querySelector("aside");
     if (aiInsightsSidebar) {
       aiInsightsSidebar.style.display = "";
     }
