@@ -357,13 +357,13 @@ export class VacantesView {
       ],
     };
 
-    // -------- Kanban (candidatos) --------
+    // -------- Kanban (vacantes) --------
     this.stagesDef = [
-      { key: 0, label: "Aplicado", color: "blue" },
-      { key: 1, label: "Screening", color: "amber" },
-      { key: 2, label: "Entrevista", color: "violet" },
-      { key: 3, label: "Oferta", color: "emerald" },
-      { key: 4, label: "Contratado", color: "teal" },
+      { key: "BORRADOR",  label: "Borrador",  color: "blue" },
+      { key: "PUBLICADA", label: "Publicada", color: "emerald" },
+      { key: "ACTIVA",    label: "Activa",    color: "teal" },
+      { key: "PAUSADA",   label: "Pausada",   color: "blue" },
+      { key: "CERRADA",   label: "Cerrada",   color: "amber" },
     ];
 
     this.kanban = {
@@ -2093,7 +2093,7 @@ export class VacantesView {
   // ---------- KANBAN ----------
   // ---------- KANBAN (CANDIDATOS) ----------
   kanbanHTML() {
-    const total = this.kanban.items.length;
+    const total = this.state.jobs.length;
     const jobsOptions = ['<option value="all">Todas las vacantes</option>']
       .concat(
         this.state.jobs.map(
@@ -2108,8 +2108,8 @@ export class VacantesView {
     <div class="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 p-4 md:p-6">
       <div class="flex flex-wrap items-center gap-3 justify-between">
         <div>
-          <h2 class="text-white text-xl md:text-2xl font-semibold">Pipeline de Candidatos</h2>
-          <p class="text-white/80 text-sm">Gestiona el proceso de selección</p>
+          <h2 class="text-white text-xl md:text-2xl font-semibold">Kanban de Vacantes</h2>
+          <p class="text-white/80 text-sm">Gestiona el proceso de las Vacantes</p>
         </div>
         <div class="flex items-center gap-2">
           <button id="kbRefresh" class="px-3 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20">🔄 Actualizar</button>
@@ -2161,12 +2161,12 @@ export class VacantesView {
       this.renderKanbanColumns();
     });
     document.getElementById("kbRefresh")?.addEventListener("click", () => {
-      this.seedCandidateBoard();
+      // para vacantes no necesitamos regenerar datos mock
       this.renderKanbanColumns();
       this.bindKanbanDnD();
     });
     document.getElementById("kbExport")?.addEventListener("click", () => {
-      alert("Exportar candidatos (demo)");
+      alert("Exportar vacantes (demo)");
     });
   }
 
@@ -2177,72 +2177,67 @@ export class VacantesView {
     // filtro búsqueda + por vacante
     const q = (this.kanban.q || "").toLowerCase();
     const jobFilter = this.kanban.jobFilter;
-    const filtered = this.kanban.items.filter((c) => {
-      const byQ =
-        !q ||
-        [c.name, c.jobTitle, c.location].some((v) =>
-          String(v).toLowerCase().includes(q)
-        );
-      const byJob = jobFilter === "all" || c.jobId === jobFilter;
+
+    const filteredJobs = this.state.jobs.filter((j) => {
+      const byQ = !q || [j.title, j.department, j.location, j.recruiter]
+        .some((v) => String(v).toLowerCase().includes(q));
+      const byJob = jobFilter === "all" || j.id === jobFilter;
       return byQ && byJob;
     });
 
-    // agrupar por etapa
-    const groups = this.stagesDef.map(() => []);
-    filtered.forEach((c) => groups[c.stage]?.push(c));
+    // agrupar por estado (usar keys de stagesDef)
+    const groupsByKey = {};
+    this.stagesDef.forEach((s) => (groupsByKey[s.key] = []));
+    filteredJobs.forEach((j) => {
+      const key = j.status; // el estado de la vacante
+      if (!groupsByKey[key]) groupsByKey[key] = [];
+      groupsByKey[key].push(j);
+    });
 
     wrap.innerHTML = this.stagesDef
-      .map((stg, idx) => {
+      .map((stg) => {
         const palette = this.colorBy(stg.color);
-        const count = groups[idx].length;
+        const items = (groupsByKey[stg.key] || []).sort((a, b) => (a.order || 0) - (b.order || 0));
+        const count = items.length;
 
         return `
     <section class="rounded-xl ring-1 ring-slate-200 dark:ring-gray-600 overflow-hidden">
       <!-- header de columna -->
-      <header class="px-3 py-2 ${
-        palette.bg
-      } text-white flex items-center justify-between">
+      <header class="px-3 py-2 ${palette.bg} text-white flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="font-medium">${stg.label}</span>
           <span class="px-2 py-0.5 text-xs rounded-full bg-white/20">${count}</span>
         </div>
-        <button class="text-white/90 hover:text-white opacity-90" title="Añadir candidato">＋</button>
       </header>
 
       <!-- zona de drop -->
-      <div class="p-2 min-h-[280px] space-y-2" data-dropzone="${idx}">
-        ${groups[idx]
-          .sort((a, b) => (a.order || 0) - (b.order || 0))
-          .map((c) => this.kanbanCard(c))
-          .join("")}
+      <div class="p-2 min-h-[280px] space-y-2" data-dropzone="${stg.key}">
+        ${items.map((j) => this.kanbanJobCard(j)).join("")}
       </div>
     </section>`;
       })
       .join("");
   }
 
-  kanbanCard(c) {
+  kanbanJobCard(j) {
     return `
-  <article draggable="true" data-id="${c.id}"
+  <article draggable="true" data-id="${j.id}"
     class="drag-card rounded-lg bg-white dark:bg-gray-800 ring-1 ring-black/5 dark:ring-white/10 p-3 cursor-grab active:cursor-grabbing">
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
-        <p class="font-medium text-slate-900 dark:text-white truncate">${
-          c.name
-        }</p>
-        <p class="text-xs text-slate-500 truncate">${c.jobTitle}</p>
+        <p class="font-medium text-slate-900 dark:text-white truncate">${j.title}</p>
+        <p class="text-xs text-slate-500 truncate">${j.department} • ${j.location}</p>
       </div>
-      <div class="shrink-0">${this.starsHTML(c.rating)}</div>
+      <div class="shrink-0 text-right">
+        <div class="text-xs text-slate-500">Apps</div>
+        <div class="text-sm font-semibold text-slate-700 dark:text-gray-200">${this.n(j.apps)}</div>
+      </div>
     </div>
 
     <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
-      <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-gray-700">${
-        c.location
-      }</span>
-      <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-gray-700">${
-        c.jobDept
-      }</span>
-      <span class="ml-auto text-slate-500">${c.appliedAgo}</span>
+      <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-gray-700">${j.recruiter}</span>
+      <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-gray-700">${j.type}</span>
+      <span class="ml-auto text-slate-500">${j.publishedAgo}</span>
     </div>
   </article>`;
   }
