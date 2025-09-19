@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+/* Configuración de fuentes */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-serif {
+  font-family: 'Merriweather', serif;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Transiciones suaves para todos los elementos */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Estilos adicionales para mejorar la experiencia */
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Asegurar que las imágenes se carguen correctamente */
+/* Blindaje del logo contra estilos globales */
+.fortia-logo {
+  width: auto !important;
+  max-width: none !important;
+  height: 2rem; /* h-8 */
+  display: block;
+}
