@@ -1093,9 +1093,20 @@ export class VacantesView {
   bindStatic() {
     document
       .getElementById("btnNew")
-      ?.addEventListener("click", () =>
-        alert("Navegar a 'Nueva Vacante' (demo)")
-      );
+      ?.addEventListener("click", () => {
+        // Navega igual que el botón del Sidebar
+        if (window?.headerInstance?.router) {
+          window.headerInstance.router.navigate('nueva-vacante');
+        } else {
+          // Fallback: usar enlace interceptado por el router
+          const a = document.createElement('a');
+          a.setAttribute('data-route', 'nueva-vacante');
+          a.setAttribute('href', '/menu/nueva-vacante');
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
+      });
     document
       .getElementById("btnReports")
       ?.addEventListener("click", () => alert("Abrir reportes (demo)"));

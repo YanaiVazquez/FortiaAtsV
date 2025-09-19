@@ -216,7 +216,12 @@ export class NuevaVacanteView {
         <div class="space-y-6">
           <!-- Descripción -->
           <div>
-            <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Descripción del puesto *</label>
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-medium text-slate-700 dark:text-gray-300">Descripción del puesto *</label>
+              <button id="btnGenerarIA" type="button" class="ml-3 inline-flex items-center gap-2 rounded-xl px-3 py-1.5 ring-1 ring-black/5 dark:ring-white/10 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700">
+                <span class="ia-label">Generar con IA</span>
+              </button>
+            </div>
             <textarea id="descripcion" rows="4" placeholder="Describe responsabilidades, objetivos y cómo contribuirá…"
               class="mt-2 w-full rounded-xl border border-slate-200 dark:border-gray-600 bg-slate-50 dark:bg-gray-700 px-3 py-2 outline-none focus:bg-white dark:bg-gray-800 dark:focus:bg-gray-600 focus:ring-2 focus:ring-[#004176] dark:focus:ring-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-gray-400">${this.escape(
                 this.state.descripcion
@@ -427,6 +432,60 @@ export class NuevaVacanteView {
           this.render(); this.bind();
         })
       );
+    }
+
+    if (this.step === 2) {
+      const btn = document.getElementById("btnGenerarIA");
+      btn?.addEventListener("click", () => {
+        const label = btn.querySelector(".ia-label");
+        const prevText = label ? label.textContent : "";
+        btn.disabled = true;
+        if (label) label.textContent = "Generando…";
+        setTimeout(() => {
+          const descEl = document.getElementById("descripcion");
+          const minEl = document.getElementById("salarioMin");
+          const maxEl = document.getElementById("salarioMax");
+          const monedaEl = document.getElementById("moneda");
+
+          const expVal = (document.getElementById("experiencia")?.value || this.state.experiencia || "").trim();
+          let min = 30000, max = 45000; // rangos por defecto
+          if (expVal === "0-2 años") { min = 25000; max = 35000; }
+          else if (expVal === "3-5 años") { min = 35000; max = 50000; }
+          else if (expVal === "6+ años") { min = 50000; max = 75000; }
+
+          const titulo = (this.state.titulo || "Rol").trim();
+          const genDesc = `Resumen del puesto: ${titulo}.
+Responsabilidades:
+- Colaborar con el equipo para cumplir objetivos.
+- Diseñar, implementar y mantener soluciones.
+- Asegurar calidad, rendimiento y buenas prácticas.
+
+Requisitos deseables:
+- Experiencia acorde al nivel (${expVal || "3-5 años"}).
+- Comunicación efectiva y trabajo en equipo.
+- Enfoque en mejora continua.`;
+
+          if (descEl && !descEl.value.trim()) {
+            descEl.value = genDesc;
+            this.state.descripcion = genDesc;
+          }
+          if (minEl && !String(minEl.value).trim()) {
+            minEl.value = String(min);
+            this.state.salarioMin = String(min);
+          }
+          if (maxEl && !String(maxEl.value).trim()) {
+            maxEl.value = String(max);
+            this.state.salarioMax = String(max);
+          }
+          if (monedaEl && !(this.state.moneda && this.state.moneda.trim())) {
+            monedaEl.value = "MXN";
+            this.state.moneda = "MXN";
+          }
+
+          if (label) label.textContent = prevText || "Generar con IA";
+          btn.disabled = false;
+        }, 1000);
+      });
     }
 
     if (this.step === 3) {
